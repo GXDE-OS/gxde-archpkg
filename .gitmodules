@@ -34,3 +34,6 @@
 [submodule "gxde-music-git"]
 	path = gxde-music-git
 	url = https://aur.archlinux.org/gxde-music-git.git
+[submodule "gxde-log-viewer-git"]
+	path = gxde-log-viewer-git
+	url = https://aur.archlinux.org/gxde-log-viewer-git.git

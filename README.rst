@@ -27,6 +27,7 @@ Parts
 - **gxde-calculator-git**: GXDE's calculator.
 - **gxde-picker-git**: GXDE's color picker.
 - **gxde-music-git**: GXDE's music player.
+- **gxde-log-viewer-git**: GXDE's system log viewer.
 
 Behavior
 --------
@@ -53,6 +54,7 @@ Optional
 #. gxde-calculator-git
 #. gxde-picker-git
 #. gxde-music-git
+#. gxde-log-viewer-git
 
 License
 -------
