@@ -17,6 +17,7 @@ Parts
 - **gxde-dtk6-git**: GXDE's fork of DTK6 framework.
 - **gxde-dtk2-qt6-git**: DTK2Widget-Qt6.
 - **gxde-infra-git**: Infrastructure components for GXDE.
+- **gxde-core-git**: Core components for GXDE desktop.
 - **flakewm-git**: GXDE's Wayland compositor.
 
 Behavior
@@ -32,6 +33,7 @@ Install Order
 #. gxde-dtk2-git
 #. gxde-dtk2-qt6-git
 #. gxde-infra-git
+#. gxde-core-git
 #. flakewm-git
 
 License

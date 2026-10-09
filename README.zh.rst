@@ -17,6 +17,7 @@ GXDE Archlinux打包
 - **gxde-dtk6-git**: GXDE的DTK6框架。
 - **gxde-dtk2-qt6-git**: DTK2Widget-Qt6.
 - **gxde-infra-git**: GXDE的基础设施包。
+- **gxde-core-git**: GXDE的桌面核心组件。
 - **flakewm-git**: GXDE的Wayland合成器。
 
 行为
@@ -32,6 +33,7 @@ GXDE Archlinux打包
 #. gxde-dtk2-git
 #. gxde-dtk2-qt6-git
 #. gxde-infra-git
+#. gxde-core-git
 #. flakewm-git
 
 许可证
