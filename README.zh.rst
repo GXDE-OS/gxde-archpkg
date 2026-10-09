@@ -31,6 +31,7 @@ GXDE Archlinux打包
 - **gxde-system-monitor-git**: GXDE的系统监视器。
 - **gxde-calculator-git**: GXDE的计算器。
 - **gxde-picker-git**: GXDE的取色器。
+- **gxde-music-git**: GXDE的音乐播放器。
 
 行为
 ----
@@ -51,6 +52,7 @@ GXDE Archlinux打包
 #. gxde-system-monitor-git
 #. gxde-calculator-git
 #. gxde-picker-git
+#. gxde-music-git
 
 许可证
 -----

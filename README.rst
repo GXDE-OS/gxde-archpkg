@@ -26,6 +26,7 @@ Parts
 - **gxde-system-monitor-git**: GXDE's system monitor.
 - **gxde-calculator-git**: GXDE's calculator.
 - **gxde-picker-git**: GXDE's color picker.
+- **gxde-music-git**: GXDE's music player.
 
 Behavior
 --------
@@ -51,6 +52,7 @@ Optional
 #. gxde-system-monitor-git
 #. gxde-calculator-git
 #. gxde-picker-git
+#. gxde-music-git
 
 License
 -------
