@@ -23,6 +23,7 @@ Parts
 - **gxde-core-git**: Core components for GXDE desktop.
 - **flakewm-git**: GXDE's Wayland compositor.
 - **gxde-display-manager-git**: GXDE's display manager (GXDM).
+- **gxde-system-monitor-git**: GXDE's system monitor.
 
 Behavior
 --------
@@ -40,6 +41,7 @@ Install Order
 #. gxde-core-git
 #. flakewm-git
 #. gxde-display-manager-git
+#. gxde-system-monitor-git
 
 License
 -------

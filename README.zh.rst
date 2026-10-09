@@ -23,6 +23,7 @@ GXDE Archlinux打包
 - **gxde-core-git**: GXDE的桌面核心组件。
 - **flakewm-git**: GXDE的Wayland合成器。
 - **gxde-display-manager-git**: GXDE的显示管理器（GXDM）。
+- **gxde-system-monitor-git**: GXDE的系统监视器。
 
 行为
 ----
@@ -40,6 +41,7 @@ GXDE Archlinux打包
 #. gxde-core-git
 #. flakewm-git
 #. gxde-display-manager-git
+#. gxde-system-monitor-git
 
 许可证
 -----

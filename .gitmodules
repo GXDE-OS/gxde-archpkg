@@ -22,3 +22,6 @@
 [submodule "gxde-infra-git"]
 	path = gxde-infra-git
 	url = https://aur.archlinux.org/gxde-infra-git.git
+[submodule "gxde-system-monitor-git"]
+	path = gxde-system-monitor-git
+	url = https://aur.archlinux.org/gxde-system-monitor-git.git
