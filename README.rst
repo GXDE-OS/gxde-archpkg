@@ -1,6 +1,9 @@
 GXDE Arch Packaging
 ===================
 
+.. image:: /docs/screenshot.png
+    :alt: Screenshot of GXDE desktop environment on Nyarch
+
 .. note::
    We're not planning to provide a full distro based on Arch, but we ported the desktop environment to Archlinux.
 
@@ -19,6 +22,7 @@ Parts
 - **gxde-infra-git**: Infrastructure components for GXDE.
 - **gxde-core-git**: Core components for GXDE desktop.
 - **flakewm-git**: GXDE's Wayland compositor.
+- **gxde-display-manager-git**: GXDE's display manager (GXDM).
 
 Behavior
 --------
@@ -35,6 +39,7 @@ Install Order
 #. gxde-infra-git
 #. gxde-core-git
 #. flakewm-git
+#. gxde-display-manager-git
 
 License
 -------

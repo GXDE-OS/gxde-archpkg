@@ -1,6 +1,9 @@
 GXDE Archlinux打包
 ==================
 
+.. image:: /docs/screenshot.png
+    :alt: Screenshot of GXDE desktop environment on Nyarch
+
 .. 注意::
    我们并不打算出一个基于Archlinux的发行版，但我们计划提供Arch版本的GXDE桌面环境安装包
 
@@ -19,6 +22,7 @@ GXDE Archlinux打包
 - **gxde-infra-git**: GXDE的基础设施包。
 - **gxde-core-git**: GXDE的桌面核心组件。
 - **flakewm-git**: GXDE的Wayland合成器。
+- **gxde-display-manager-git**: GXDE的显示管理器（GXDM）。
 
 行为
 ----
@@ -35,6 +39,7 @@ GXDE Archlinux打包
 #. gxde-infra-git
 #. gxde-core-git
 #. flakewm-git
+#. gxde-display-manager-git
 
 许可证
 -----
