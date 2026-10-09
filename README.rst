@@ -24,6 +24,7 @@ Parts
 - **flakewm-git**: GXDE's Wayland compositor.
 - **gxde-display-manager-git**: GXDE's display manager (GXDM).
 - **gxde-system-monitor-git**: GXDE's system monitor.
+- **gxde-calculator-git**: GXDE's calculator.
 
 Behavior
 --------
@@ -42,6 +43,7 @@ Install Order
 #. flakewm-git
 #. gxde-display-manager-git
 #. gxde-system-monitor-git
+#. gxde-calculator-git
 
 License
 -------

@@ -25,3 +25,6 @@
 [submodule "gxde-system-monitor-git"]
 	path = gxde-system-monitor-git
 	url = https://aur.archlinux.org/gxde-system-monitor-git.git
+[submodule "gxde-calculator-git"]
+	path = gxde-calculator-git
+	url = https://aur.archlinux.org/gxde-calculator-git.git
