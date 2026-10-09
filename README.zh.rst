@@ -33,6 +33,7 @@ GXDE Archlinux打包
 - **gxde-picker-git**: GXDE的取色器。
 - **gxde-music-git**: GXDE的音乐播放器。
 - **gxde-log-viewer-git**: GXDE的日志查看器。
+- **gxde-image-viewer-git**: GXDE的图片查看器。
 
 行为
 ----
@@ -55,6 +56,7 @@ GXDE Archlinux打包
 #. gxde-picker-git
 #. gxde-music-git
 #. gxde-log-viewer-git
+#. gxde-image-viewer-git
 
 许可证
 -----

@@ -28,6 +28,7 @@ Parts
 - **gxde-picker-git**: GXDE's color picker.
 - **gxde-music-git**: GXDE's music player.
 - **gxde-log-viewer-git**: GXDE's system log viewer.
+- **gxde-image-viewer-git**: GXDE's image viewer.
 
 Behavior
 --------
@@ -55,6 +56,7 @@ Optional
 #. gxde-picker-git
 #. gxde-music-git
 #. gxde-log-viewer-git
+#. gxde-image-viewer-git
 
 License
 -------

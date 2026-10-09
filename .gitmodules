@@ -37,3 +37,6 @@
 [submodule "gxde-log-viewer-git"]
 	path = gxde-log-viewer-git
 	url = https://aur.archlinux.org/gxde-log-viewer-git.git
+[submodule "gxde-image-viewer-git"]
+	path = gxde-image-viewer-git
+	url = https://aur.archlinux.org/gxde-image-viewer-git.git
