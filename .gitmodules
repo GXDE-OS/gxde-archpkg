@@ -1,0 +1,24 @@
+[submodule "flakewm-git"]
+	path = flakewm-git
+	url = https://aur.archlinux.org/flakewm-git.git
+[submodule "gxde-core-git"]
+	path = gxde-core-git
+	url = https://aur.archlinux.org/gxde-core-git.git
+[submodule "gxde-display-manager-git"]
+	path = gxde-display-manager-git
+	url = https://aur.archlinux.org/gxde-display-manager-git.git
+[submodule "gxde-dtk2-git"]
+	path = gxde-dtk2-git
+	url = https://aur.archlinux.org/gxde-dtk2-git.git
+[submodule "gxde-dtk2-qt6-git"]
+	path = gxde-dtk2-qt6-git
+	url = https://aur.archlinux.org/gxde-dtk2-qt6-git.git
+[submodule "gxde-dtk5-git"]
+	path = gxde-dtk5-git
+	url = https://aur.archlinux.org/gxde-dtk5-git.git
+[submodule "gxde-dtk6-git"]
+	path = gxde-dtk6-git
+	url = https://aur.archlinux.org/gxde-dtk6-git.git
+[submodule "gxde-infra-git"]
+	path = gxde-infra-git
+	url = https://aur.archlinux.org/gxde-infra-git.git
