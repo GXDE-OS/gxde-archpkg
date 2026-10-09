@@ -15,6 +15,8 @@ GXDE Archlinux打包
 组件
 ----
 
+必需组件
+~~~~~~~
 - **gxde-dtk2-git**: GXDE的DTK2框架。
 - **gxde-dtk5-git**: GXDE的DTK5框架。
 - **gxde-dtk6-git**: GXDE的DTK6框架。
@@ -22,9 +24,13 @@ GXDE Archlinux打包
 - **gxde-infra-git**: GXDE的基础设施包。
 - **gxde-core-git**: GXDE的桌面核心组件。
 - **flakewm-git**: GXDE的Wayland合成器。
+
+可选套件
+~~~~~~~
 - **gxde-display-manager-git**: GXDE的显示管理器（GXDM）。
 - **gxde-system-monitor-git**: GXDE的系统监视器。
 - **gxde-calculator-git**: GXDE的计算器。
+- **gxde-picker-git**: GXDE的取色器。
 
 行为
 ----
@@ -44,6 +50,7 @@ GXDE Archlinux打包
 #. gxde-display-manager-git
 #. gxde-system-monitor-git
 #. gxde-calculator-git
+#. gxde-picker-git
 
 许可证
 -----

@@ -28,3 +28,6 @@
 [submodule "gxde-calculator-git"]
 	path = gxde-calculator-git
 	url = https://aur.archlinux.org/gxde-calculator-git.git
+[submodule "gxde-picker-git"]
+	path = gxde-picker-git
+	url = https://aur.archlinux.org/gxde-picker-git.git

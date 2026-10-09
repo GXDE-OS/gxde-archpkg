@@ -25,6 +25,7 @@ Parts
 - **gxde-display-manager-git**: GXDE's display manager (GXDM).
 - **gxde-system-monitor-git**: GXDE's system monitor.
 - **gxde-calculator-git**: GXDE's calculator.
+- **gxde-picker-git**: GXDE's color picker.
 
 Behavior
 --------
@@ -34,6 +35,8 @@ All the PKGBUILD pulls the latest tag, so the version pulled should be the same 
 Install Order
 -------------
 
+Required
+~~~~~~~~
 #. gxde-dtk5-git
 #. gxde-dtk6-git
 #. gxde-dtk2-git
@@ -41,9 +44,13 @@ Install Order
 #. gxde-infra-git
 #. gxde-core-git
 #. flakewm-git
+
+Optional
+~~~~~~~~
 #. gxde-display-manager-git
 #. gxde-system-monitor-git
 #. gxde-calculator-git
+#. gxde-picker-git
 
 License
 -------
