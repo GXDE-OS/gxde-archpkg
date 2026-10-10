@@ -40,3 +40,60 @@
 [submodule "gxde-image-viewer-git"]
 	path = gxde-image-viewer-git
 	url = https://aur.archlinux.org/gxde-image-viewer-git.git
+[submodule "spark-webapp-runtime-git"]
+	path = spark-webapp-runtime-git
+	url = https://aur.archlinux.org/spark-webapp-runtime-git.git
+[submodule "gxde-voice-recorder-git"]
+	path = gxde-voice-recorder-git
+	url = https://aur.archlinux.org/gxde-voice-recorder-git.git
+[submodule "gxde-reader-git"]
+	path = gxde-reader-git
+	url = https://aur.archlinux.org/gxde-reader-git.git
+[submodule "gxde-font-manager-git"]
+	path = gxde-font-manager-git
+	url = https://aur.archlinux.org/gxde-font-manager-git.git
+[submodule "gxde-system-assistant-git"]
+	path = gxde-system-assistant-git
+	url = https://aur.archlinux.org/gxde-system-assistant-git.git
+[submodule "gxde-screen-recorder-git"]
+	path = gxde-screen-recorder-git
+	url = https://aur.archlinux.org/gxde-screen-recorder-git.git
+[submodule "gxde-boot-maker-git"]
+	path = gxde-boot-maker-git
+	url = https://aur.archlinux.org/gxde-boot-maker-git.git
+[submodule "gxde-clone-git"]
+	path = gxde-clone-git
+	url = https://aur.archlinux.org/gxde-clone-git.git
+[submodule "gxde-calendar-git"]
+	path = gxde-calendar-git
+	url = https://aur.archlinux.org/gxde-calendar-git.git
+[submodule "gxde-hardware-viewer-git"]
+	path = gxde-hardware-viewer-git
+	url = https://aur.archlinux.org/gxde-hardware-viewer-git.git
+[submodule "gxde-ocr-git"]
+	path = gxde-ocr-git
+	url = https://aur.archlinux.org/gxde-ocr-git.git
+[submodule "gxde-dict-git"]
+	path = gxde-dict-git
+	url = https://aur.archlinux.org/gxde-dict-git.git
+[submodule "gxde-editor-git"]
+	path = gxde-editor-git
+	url = https://aur.archlinux.org/gxde-editor-git.git
+[submodule "gxde-dlna-caster-git"]
+	path = gxde-dlna-caster-git
+	url = https://aur.archlinux.org/gxde-dlna-caster-git.git
+[submodule "gxde-roller-git"]
+	path = gxde-roller-git
+	url = https://aur.archlinux.org/gxde-roller-git.git
+[submodule "gxde-camera-git"]
+	path = gxde-camera-git
+	url = https://aur.archlinux.org/gxde-camera-git.git
+[submodule "dde-clipboard-git"]
+	path = dde-clipboard-git
+	url = https://aur.archlinux.org/dde-clipboard-git.git
+[submodule "gxde-downloader-neo-git"]
+	path = gxde-downloader-neo-git
+	url = https://aur.archlinux.org/gxde-downloader-neo-git.git
+[submodule "gxde-filetransfer-git"]
+	path = gxde-filetransfer-git
+	url = https://aur.archlinux.org/gxde-filetransfer-git.git
