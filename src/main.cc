@@ -42,8 +42,6 @@
 #include <archive.h>
 #include <archive_entry.h>
 
-// Exit statuses are truncated to 8 bits, keep these within 0-255 and clear of
-// the sysexits.h range (64-78).
 #define EX_LOCAL_VERSION_NEWER 100
 #define EX_LOCAL_VERSION_OLDER 101
 
