@@ -1,0 +1,32 @@
+# Maintainer: CharOfString <root@charofstring.cc>
+
+pkgname=gxde-arch-qt-probe
+_bin=gxde_arch_qt_probe
+pkgver=r5.g1d988ee
+pkgrel=1
+pkgdesc='Checks whether the local Qt version matches Arch Linux upstream'
+arch=(x86_64 aarch64)
+url='https://github.com/GXDE-OS/gxde-archpkg'
+license=(GPL-3.0-or-later)
+depends=(qt6-base libarchive gcc-libs glibc)
+makedepends=(git cmake)
+
+_srcroot="$startdir/.."
+
+pkgver() {
+  printf 'r%s.g%s' "$(git -C "$_srcroot" rev-list --count HEAD)" \
+    "$(git -C "$_srcroot" rev-parse --short=7 HEAD)"
+}
+
+build() {
+  cmake -B build -S "$_srcroot" \
+    -DCMAKE_BUILD_TYPE=None \
+    -DCMAKE_INSTALL_PREFIX=/usr \
+    -Wno-dev
+  cmake --build build
+}
+
+package() {
+  install -Dm755 "build/$_bin" "$pkgdir/usr/bin/$_bin"
+  install -Dm644 "$_srcroot/README.md" "$pkgdir/usr/share/doc/$pkgname/README.md"
+}
