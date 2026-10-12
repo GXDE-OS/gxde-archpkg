@@ -1,12 +1,14 @@
-# 构建 GXDE DTK6 的 Arch 软件包（以及 Qt6 版本探针）并推送到 GXDE Arch 源。
+# 构建 GXDE DTK6 与基于其上的 DTK2 Qt6 移植版的 Arch 软件包（以及 Qt6 版本探针）并推送到
+# GXDE Arch 源。DTK2 Qt6 依赖 DTK6，因此在 DTK6 之后构建。
 # dtkcommon-git 由 DTK5 批量构建提供，此处从 GXDE Arch 源安装。
 # -----------------------------------------------------------------------------
-# Builds the GXDE DTK6 Arch packages (plus the Qt 6 version probe) and pushes
-# them to the GXDE Arch repo.  dtkcommon-git comes from the DTK5 batch and is
-# installed from the GXDE Arch repo here.
+# Builds the GXDE DTK6 Arch packages, the DTK2 Qt 6 port built on top of it,
+# and the Qt 6 version probe, then pushes them to the GXDE Arch repo.  The DTK2
+# Qt 6 port links against DTK6, so it comes after DTK6.  dtkcommon-git comes
+# from the DTK5 batch and is installed from the GXDE Arch repo here.
 
-name: Building GXDE DTK6 Arch Packages
-run-name: Building GXDE DTK6 Arch Packages
+name: Building GXDE DTK6 And DTK2 Qt6 Arch Packages
+run-name: Building GXDE DTK6 And DTK2 Qt6 Arch Packages
 
 on:
   workflow_dispatch:
@@ -32,6 +34,12 @@ on:
       qt6integration:
         description: qt6integration branch or tag
         default: master
+      dtk2widget_qt6:
+        description: dtk2widget-qt6 branch or tag
+        default: qt6
+      gxde_qt6_integration:
+        description: gxde-qt6-integration branch or tag
+        default: qt6
       qt_probe:
         description: gxde-archpkg branch or tag for the Qt probe
         default: qt_version_probe
@@ -66,6 +74,14 @@ on:
         description: qt6integration branch or tag
         type: string
         default: master
+      dtk2widget_qt6:
+        description: dtk2widget-qt6 branch or tag
+        type: string
+        default: qt6
+      gxde_qt6_integration:
+        description: gxde-qt6-integration branch or tag
+        type: string
+        default: qt6
       qt_probe:
         description: gxde-archpkg branch or tag for the Qt probe
         type: string
@@ -91,4 +107,6 @@ jobs:
         dtk6declarative:${{ inputs.dtk6declarative }}
         dde-qt6platform-plugins:${{ inputs.dde_qt6platform_plugins }}
         qt6integration:${{ inputs.qt6integration }}
+        dtk2widget-qt6:${{ inputs.dtk2widget_qt6 }}
+        gxde-qt6-integration:${{ inputs.gxde_qt6_integration }}
         gxde-archpkg:${{ inputs.qt_probe }}:gxde-arch-qt-probe

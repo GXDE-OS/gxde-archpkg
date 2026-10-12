@@ -1,7 +1,9 @@
-# 每日检查 GXDE Arch 源中 DTK6 构建时所用的 qt6-base 是否仍与 Arch 上游一致，不一致时触发 DTK6 批量重建。
+# 每日检查 GXDE Arch 源中 DTK6/DTK2 Qt6 构建时所用的 qt6-base 是否仍与 Arch 上游一致，
+# 不一致时触发 DTK6/DTK2 Qt6 批量重建。
 # -----------------------------------------------------------------------------
-# Daily check that the qt6-base the GXDE Arch repo's DTK6 was built against
-# still matches Arch upstream, triggering the DTK6 batch rebuild otherwise.
+# Daily check that the qt6-base the GXDE Arch repo's DTK6 and DTK2 Qt 6 port
+# were built against still matches Arch upstream, triggering the DTK6/DTK2 Qt 6
+# batch rebuild otherwise.
 
 name: Watching Qt Version For DTK6
 run-name: Watching Qt Version For DTK6
