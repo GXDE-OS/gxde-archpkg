@@ -84,9 +84,10 @@ jobs:
             only=
             [[ $rest == *:* ]] && only=${rest#*:}
             repoPath=/home/builder/$name
-            if [[ -f $BOTTLEPATH$repoPath/arch/PKGBUILD ]]; then
+            # builder 的家目录权限为 700，需用 sudo 检查 ・ builder's home is mode 700, check with sudo.
+            if sudo test -f $BOTTLEPATH$repoPath/arch/PKGBUILD; then
               buildPath=$repoPath/arch
-            elif [[ -f $BOTTLEPATH$repoPath/PKGBUILD ]]; then
+            elif sudo test -f $BOTTLEPATH$repoPath/PKGBUILD; then
               buildPath=$repoPath
             else
               echo "::error::No PKGBUILD found in $name ($module)"
