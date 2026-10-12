@@ -1,0 +1,25 @@
+# 每日检查 GXDE Arch 源中 DTK6 构建时所用的 qt6-base 是否仍与 Arch 上游一致，不一致时触发 DTK6 批量重建。
+# -----------------------------------------------------------------------------
+# Daily check that the qt6-base the GXDE Arch repo's DTK6 was built against
+# still matches Arch upstream, triggering the DTK6 batch rebuild otherwise.
+
+name: Watching Qt Version For DTK6
+run-name: Watching Qt Version For DTK6
+
+on:
+  workflow_dispatch:
+  schedule:
+    - cron: "57 19 * * *"
+
+jobs:
+  watch:
+    uses: ./.github/workflows/qt-watch-arch.yml
+    with:
+      probe_package: gxde-arch-qt-probe
+      probe_binary: gxde_arch_qt_probe
+
+  rebuild:
+    needs: watch
+    if: needs.watch.outputs.rebuild == 'true'
+    uses: ./.github/workflows/building-dtk6.yml
+    secrets: inherit

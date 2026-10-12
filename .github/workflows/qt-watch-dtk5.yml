@@ -1,11 +1,7 @@
-# 每日检查 GXDE Arch 源中 DTK5 构建时所用的 Qt5 是否仍与 Arch 上游一致。
-# 源中的 gxde-arch-qt5-probe 与 DTK5 一同构建，它比较自身编译时的 Qt 版本与上游
-# qt5-base，任一架构报告不一致（退出码 100/101）即触发 DTK5 批量重建。
+# 每日检查 GXDE Arch 源中 DTK5 构建时所用的 qt5-base 是否仍与 Arch 上游一致，不一致时触发 DTK5 批量重建。
 # -----------------------------------------------------------------------------
-# Daily check that the Qt 5 the GXDE Arch repo's DTK5 was built against still
-# matches Arch upstream.  gxde-arch-qt5-probe is built together with DTK5 and
-# compares its own compile-time Qt with upstream qt5-base; a mismatch on any
-# architecture (exit code 100/101) triggers the DTK5 batch rebuild.
+# Daily check that the qt5-base the GXDE Arch repo's DTK5 was built against
+# still matches Arch upstream, triggering the DTK5 batch rebuild otherwise.
 
 name: Watching Qt Version For DTK5
 run-name: Watching Qt Version For DTK5
@@ -15,115 +11,15 @@ on:
   schedule:
     - cron: "57 19 * * *"
 
-env:
-  REPOSITORY: https://github.com/GXDE-OS/GXDE
-  BOTTLEPATH: system-bottle
-  GXDE_ARCH_REPO: https://repo1.gxde.top/gxde-arch
-  PROBE_PACKAGE: gxde-arch-qt5-probe
-  PROBE_BINARY: gxde_arch_qt5_probe
-
 jobs:
-  probe:
-    if: github.repository_owner == 'GXDE-OS'
-    name: ${{ matrix.arch }}-probe
-    runs-on: ${{ matrix.runner }}
-    strategy:
-      fail-fast: false
-      matrix:
-        include:
-          - arch: x86_64
-            runner: ubuntu-24.04
-          - arch: aarch64
-            runner: ubuntu-24.04-arm
-    steps:
-      - name: Clone Repository To Get Script
-        run: |
-          git clone $REPOSITORY --depth=1
-          mv $(basename $REPOSITORY)/* . -v
-          mv $(basename $REPOSITORY)/.* . -v | true
-
-      - name: Configure Base System
-        run: |
-          bash .github/workflows/configure-building-enviroment-arch.sh ${{ matrix.arch }} \
-            $REPOSITORY \
-            https://github.com/$GITHUB_REPOSITORY \
-            ${{ github.ref_name }} \
-            $GXDE_ARCH_REPO
-
-      - name: Run Qt Probe
-        run: |
-          # 环境脚本在 GXDE 源不可达时会移除它，此时无法判断，直接报错
-          # The configure script drops the GXDE repo when it is unreachable, we
-          # can't tell anything without it.
-          if ! sudo chroot $BOTTLEPATH pacman -Sl gxde > /dev/null; then
-            echo "::error::GXDE Arch repo is unavailable"
-            exit 1
-          fi
-
-          # 源中还没有探针时视为需要重建，重建会把探针一起发布
-          # No probe in the repo yet means DTK5 was never built with one, so
-          # rebuild, which publishes the probe as well.
-          if ! sudo chroot $BOTTLEPATH pacman -S --noconfirm gxde/$PROBE_PACKAGE; then
-            echo "::warning::$PROBE_PACKAGE is not in the GXDE Arch repo, requesting rebuild"
-            echo mismatch > result-${{ matrix.arch }}
-            exit 0
-          fi
-
-          set +e
-          sudo chroot $BOTTLEPATH $PROBE_BINARY
-          code=$?
-          set -e
-          case $code in
-            0)
-              echo match > result-${{ matrix.arch }}
-              ;;
-            100|101)
-              echo "::notice::Qt version mismatch on ${{ matrix.arch }} (exit $code)"
-              echo mismatch > result-${{ matrix.arch }}
-              ;;
-            *)
-              echo "::error::$PROBE_BINARY failed with exit code $code"
-              exit 1
-              ;;
-          esac
-
-      - name: Upload Result
-        uses: actions/upload-artifact@v4
-        with:
-          name: qt-probe-${{ matrix.arch }}
-          path: result-${{ matrix.arch }}
-
-  # 某一架构探测出错时，仍按另一架构的结果决定 ・ Still decide on the other architecture if one probe errored.
-  decide:
-    needs: probe
-    if: ${{ !cancelled() && needs.probe.result != 'skipped' }}
-    runs-on: ubuntu-24.04
-    outputs:
-      rebuild: ${{ steps.decide.outputs.rebuild }}
-    steps:
-      - uses: actions/download-artifact@v4
-        with:
-          pattern: qt-probe-*
-          merge-multiple: true
-
-      - name: Decide
-        id: decide
-        run: |
-          shopt -s nullglob
-          results=(result-*)
-          if (( ${#results[@]} == 0 )); then
-            echo "::error::No probe produced a result"
-            exit 1
-          fi
-          grep -H . "${results[@]}"
-          if grep -qx mismatch "${results[@]}"; then
-            echo "rebuild=true" >> $GITHUB_OUTPUT
-          else
-            echo "rebuild=false" >> $GITHUB_OUTPUT
-          fi
+  watch:
+    uses: ./.github/workflows/qt-watch-arch.yml
+    with:
+      probe_package: gxde-arch-qt5-probe
+      probe_binary: gxde_arch_qt5_probe
 
   rebuild:
-    needs: decide
-    if: needs.decide.outputs.rebuild == 'true'
+    needs: watch
+    if: needs.watch.outputs.rebuild == 'true'
     uses: ./.github/workflows/building-dtk5.yml
     secrets: inherit
