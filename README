@@ -1,8 +1,8 @@
 ## GXDE Archlinux Qt Probe
 ### Introduction
 This application checks whether your Qt version matches Archlinux upstream.
-- If your Qt version is newer than remote then this program returns 7355.
-- If your Qt version is older than remote then this program returns 608.
+- If your Qt version is newer than remote then this program returns 100.
+- If your Qt version is older than remote then this program returns 101.
 - If your Qt version matches remote version then this program returns 0.
 
 ### License

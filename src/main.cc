@@ -42,8 +42,10 @@
 #include <archive.h>
 #include <archive_entry.h>
 
-#define EX_LOCAL_VERSION_NEWER 7355
-#define EX_LOCAL_VERSION_OLDER 608
+// Exit statuses are truncated to 8 bits, keep these within 0-255 and clear of
+// the sysexits.h range (64-78).
+#define EX_LOCAL_VERSION_NEWER 100
+#define EX_LOCAL_VERSION_OLDER 101
 
 namespace {
 
@@ -160,9 +162,11 @@ int main(int argc, char *argv[]) {
       archive_read_support_filter_all(archive_gen);  // gzip, zstd, whatever.
       archive_read_support_format_tar(archive_gen);
 
-      if (archive_read_open_memory(archive_gen, reply_gen->readAll()
-          .constData(), size_t(reply_gen->readAll()
-            .size())) == ARCHIVE_OK) {
+      // libarchive reads from this buffer lazily, so it must outlive
+      // archive_gen.
+      const QByteArray reply_body = reply_gen->readAll();
+      if (archive_read_open_memory(archive_gen, reply_body.constData(),
+          size_t(reply_body.size())) == ARCHIVE_OK) {
         const QByteArray prefix = pkg_base.toUtf8() + '-';
         archive_entry* entry_gen = nullptr;
         while (archive_read_next_header(archive_gen,
