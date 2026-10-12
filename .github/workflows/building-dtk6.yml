@@ -1,11 +1,14 @@
 # 构建 GXDE DTK6 与基于其上的 DTK2 Qt6 移植版的 Arch 软件包（以及 Qt6 版本探针）并推送到
 # GXDE Arch 源。DTK2 Qt6 依赖 DTK6，因此在 DTK6 之后构建。
 # dtkcommon-git 由 DTK5 批量构建提供，此处从 GXDE Arch 源安装。
+# 全部成功推送后，再依次重建链接 DTK6 的应用。
 # -----------------------------------------------------------------------------
 # Builds the GXDE DTK6 Arch packages, the DTK2 Qt 6 port built on top of it,
 # and the Qt 6 version probe, then pushes them to the GXDE Arch repo.  The DTK2
 # Qt 6 port links against DTK6, so it comes after DTK6.  dtkcommon-git comes
-# from the DTK5 batch and is installed from the GXDE Arch repo here.
+# from the DTK5 batch and is installed from the GXDE Arch repo here.  Once
+# everything is pushed, the applications linking against DTK6 are rebuilt in
+# turn.
 
 name: Building GXDE DTK6 And DTK2 Qt6 Arch Packages
 run-name: Building GXDE DTK6 And DTK2 Qt6 Arch Packages
@@ -110,3 +113,20 @@ jobs:
         dtk2widget-qt6:${{ inputs.dtk2widget_qt6 }}
         gxde-qt6-integration:${{ inputs.gxde_qt6_integration }}
         gxde-archpkg:${{ inputs.qt_probe }}:gxde-arch-qt-probe
+
+  # 等 DTK6 两个架构都推送成功后再开始，从 GXDE Arch 源取得刚发布的 DTK6
+  # Starts only after DTK6 was pushed on both architectures, and picks the
+  # fresh DTK6 up from the GXDE Arch repo.
+  apps:
+    needs: build
+    uses: ./.github/workflows/building-arch-batch.yml
+    secrets: inherit
+    with:
+      name: dtk6-apps
+      # workflow_dispatch 最多 10 个输入，应用固定使用 master；libgxmr-git 是 Qt5 版本，不随 DTK6 推送
+      # workflow_dispatch takes at most 10 inputs, so the applications always
+      # build master.  libgxmr-git is the Qt 5 build and is left out of the
+      # DTK6 push.
+      modules: >-
+        xdg-desktop-portal-gxde:master
+        gxde-movie-reborn:master:gxde-movie-git,libgxmr-qt6-git

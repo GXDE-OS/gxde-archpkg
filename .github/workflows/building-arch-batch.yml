@@ -20,9 +20,9 @@ on:
         required: true
       modules:
         description: >-
-          Whitespace separated <repo>:<branch or tag>[:<package>] entries in
-          dependency order.  <package> limits a split package to the one
-          package that is collected and pushed.
+          Whitespace separated <repo>:<branch or tag>[:<package>[,<package>...]]
+          entries in dependency order.  <package> limits a split package to
+          the listed packages that are collected and pushed.
         type: string
         required: true
 
@@ -108,7 +108,8 @@ jobs:
                 $1 == "\tpkgver" { v = $2 }
                 $1 == "\tpkgrel" { r = $2 }
                 END { print n, v, r }' <<< "$srcinfo")
-            pkgname=${only:-$pkgname}
+            pkgnames=(${only//,/ })
+            (( ${#pkgnames[@]} )) || pkgnames=($pkgname)
 
             # 同一 chroot 中先前模块装入的包可能与本模块冲突（如 dtkwidget2-dev-git 与
             # dtkwidget-git 共用开发文件路径），构建前将其卸载，使环境与单独构建时一致
@@ -124,27 +125,35 @@ jobs:
                 sudo chroot $BOTTLEPATH pacman -Rdd --noconfirm $installed
               fi
             fi
-            remote=$(sudo chroot $BOTTLEPATH env LC_ALL=C pacman -Si gxde/$pkgname 2>/dev/null \
-              | sed -n 's/^Version *: *//p')
-            remoteVer=${remote#*:}
-            remoteVer=${remoteVer%-*}
-            remoteRel=${remote##*-}
-            if [[ -n $remote && $remoteVer == "$pkgver" ]] && (( ${remoteRel%%.*} >= ${pkgrel%%.*} )); then
-              newRel=$(( ${remoteRel%%.*} + 1 ))
-              echo "$pkgname: repo has $remote, bumping pkgrel $pkgrel -> $newRel"
+
+            # 推送多个拆分包时取源中最大的 pkgrel ・ With several packages pushed, go past the highest pkgrel among them.
+            newRel=${pkgrel%%.*}
+            for pkg in "${pkgnames[@]}"; do
+              remote=$(sudo chroot $BOTTLEPATH env LC_ALL=C pacman -Si gxde/$pkg 2>/dev/null \
+                | sed -n 's/^Version *: *//p')
+              remoteVer=${remote#*:}
+              remoteVer=${remoteVer%-*}
+              remoteRel=${remote##*-}
+              echo "$pkg: repo has ${remote:-nothing}, building $pkgver-$pkgrel"
+              if [[ -n $remote && $remoteVer == "$pkgver" ]] && (( ${remoteRel%%.*} >= newRel )); then
+                newRel=$(( ${remoteRel%%.*} + 1 ))
+              fi
+            done
+            if [[ $newRel != "${pkgrel%%.*}" ]]; then
+              echo "$name: bumping pkgrel $pkgrel -> $newRel"
               sudo chroot $BOTTLEPATH sudo -H -u builder \
                 sed -i "s/^pkgrel=.*/pkgrel=$newRel/" $buildPath/PKGBUILD
-            else
-              echo "$pkgname: repo has ${remote:-nothing}, keeping $pkgver-$pkgrel"
             fi
 
             sudo chroot $BOTTLEPATH sudo -H -u builder bash -c \
               "cd $buildPath && makepkg -si --noconfirm --needed"
-            # 指定了软件包时只收集它，避免把拆分包中的其他包一并推送
-            # With <package> given, collect only it and leave the rest of the
-            # split package out of the push.
-            sudo find $BOTTLEPATH$buildPath -maxdepth 1 -name "${only:+$only-$pkgver-}*.pkg.tar.*" ! -name '*.sig' \
-              -exec cp -v {} packages/ \;
+            # 指定了软件包时只收集它们，避免把拆分包中的其他包一并推送
+            # With <package> given, collect only the listed packages and leave
+            # the rest of the split package out of the push.
+            for pkg in "${pkgnames[@]}"; do
+              sudo find $BOTTLEPATH$buildPath -maxdepth 1 -name "${only:+$pkg-$pkgver-}*.pkg.tar.*" ! -name '*.sig' \
+                -exec cp -v {} packages/ \;
+            done
             echo "::endgroup::"
           done
           sudo chown -R $(id -u):$(id -g) packages
