@@ -1,14 +1,14 @@
 # 构建 GXDE DTK6 与基于其上的 DTK2 Qt6 移植版的 Arch 软件包（以及 Qt6 版本探针）并推送到
 # GXDE Arch 源。DTK2 Qt6 依赖 DTK6，因此在 DTK6 之后构建。
 # dtkcommon-git 由 DTK5 批量构建提供，此处从 GXDE Arch 源安装。
-# 全部成功推送后，再依次重建链接 DTK6 的应用。
+# 全部成功推送后，再依次重建链接 DTK6 或使用 Qt6 私有 API 的应用。
 # -----------------------------------------------------------------------------
 # Builds the GXDE DTK6 Arch packages, the DTK2 Qt 6 port built on top of it,
 # and the Qt 6 version probe, then pushes them to the GXDE Arch repo.  The DTK2
 # Qt 6 port links against DTK6, so it comes after DTK6.  dtkcommon-git comes
 # from the DTK5 batch and is installed from the GXDE Arch repo here.  Once
-# everything is pushed, the applications linking against DTK6 are rebuilt in
-# turn.
+# everything is pushed, the applications linking against DTK6 or using Qt 6
+# private API are rebuilt in turn.
 
 name: Building GXDE DTK6 And DTK2 Qt6 Arch Packages
 run-name: Building GXDE DTK6 And DTK2 Qt6 Arch Packages
@@ -123,10 +123,25 @@ jobs:
     secrets: inherit
     with:
       name: dtk6-apps
-      # workflow_dispatch 最多 10 个输入，应用固定使用 master；libgxmr-git 是 Qt5 版本，不随 DTK6 推送
+      # workflow_dispatch 最多 10 个输入，应用固定使用各自 Arch 包所在的分支；libgxmr-git 是 Qt5 版本，
+      # 不随 DTK6 推送。gxde-movie-reborn 之后的应用使用了 Qt6 私有 API 或 QPA 头文件，
+      # 只在构建时的 Qt 小版本下可靠，Qt6 升级后同样需要重建；libgxde-file-manager 还引用了
+      # QObjectPrivate(QtPrivate_6_x_0)，只能在构建时的 Qt 小版本下加载
       # workflow_dispatch takes at most 10 inputs, so the applications always
-      # build master.  libgxmr-git is the Qt 5 build and is left out of the
-      # DTK6 push.
+      # build the branch carrying their Arch package.  libgxmr-git is the Qt 5
+      # build and is left out of the DTK6 push.  The applications after
+      # gxde-movie-reborn use Qt 6 private API or QPA headers, which only hold
+      # for the Qt minor release they were built against, so they are rebuilt
+      # on a Qt 6 update too; libgxde-file-manager even references
+      # QObjectPrivate(QtPrivate_6_x_0) and only loads with that minor release.
       modules: >-
         xdg-desktop-portal-gxde:master
         gxde-movie-reborn:master:gxde-movie-git,libgxmr-qt6-git
+        deepin-menu:master
+        gxde-dock:master
+        gxde-top-panel-plugins:d20
+        gxde-control-center:master
+        gxde-launcher:master
+        gxde-terminal:dtk6
+        deepin-screensaver:master
+        gxde-file-manager:char/qt6_migration
