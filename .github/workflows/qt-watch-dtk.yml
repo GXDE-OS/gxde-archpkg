@@ -1,0 +1,47 @@
+# 每日检查 GXDE Arch 源中 DTK 构建时所用的 Qt 是否仍与 Arch 上游一致，不一致时触发对应的批量重建。
+# 按 DTK5/DTK2 → DTK6 的顺序串行执行：DTK6 依赖 DTK5 批量构建提供的 dtkcommon-git，
+# 且串行可避免两组批量构建同时占用 CI。
+# -----------------------------------------------------------------------------
+# Daily check that the Qt the GXDE Arch repo's DTK stacks were built against
+# still matches Arch upstream, triggering the matching batch rebuild otherwise.
+# Runs DTK5/DTK2 first and DTK6 after it: DTK6 needs the dtkcommon-git from the
+# DTK5 batch, and running them in series keeps the two batches from occupying
+# CI runners at the same time.
+
+name: Watching Qt Version For DTK
+run-name: Watching Qt Version For DTK
+
+on:
+  workflow_dispatch:
+  schedule:
+    - cron: "57 19 * * *"
+
+jobs:
+  watch-dtk5:
+    uses: ./.github/workflows/qt-watch-arch.yml
+    with:
+      probe_package: gxde-arch-qt5-probe
+      probe_binary: gxde_arch_qt5_probe
+
+  rebuild-dtk5:
+    needs: watch-dtk5
+    if: needs.watch-dtk5.outputs.rebuild == 'true'
+    uses: ./.github/workflows/building-dtk5.yml
+    secrets: inherit
+
+  # DTK5 一侧无论成功、失败还是无需重建，都继续检查 DTK6
+  # Check DTK6 once the DTK5 side is done, whether it rebuilt, failed or had
+  # nothing to do.
+  watch-dtk6:
+    needs: [watch-dtk5, rebuild-dtk5]
+    if: ${{ !cancelled() }}
+    uses: ./.github/workflows/qt-watch-arch.yml
+    with:
+      probe_package: gxde-arch-qt-probe
+      probe_binary: gxde_arch_qt_probe
+
+  rebuild-dtk6:
+    needs: watch-dtk6
+    if: ${{ !cancelled() && needs.watch-dtk6.outputs.rebuild == 'true' }}
+    uses: ./.github/workflows/building-dtk6.yml
+    secrets: inherit
