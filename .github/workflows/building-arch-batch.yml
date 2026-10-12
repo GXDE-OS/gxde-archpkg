@@ -1,0 +1,170 @@
+# 按依赖顺序在同一个 chroot 中构建一组 GXDE-OS 仓库的 Arch 软件包并推送到 GXDE Arch 源。
+# 每个模块使用其仓库自带的 arch/PKGBUILD（或根目录 PKGBUILD），构建完成后立即安装，
+# 供后续模块作为依赖使用。若源中已有相同版本，pkgrel 会自动提升。
+# -----------------------------------------------------------------------------
+# Builds a set of GXDE-OS repositories as Arch packages in dependency order
+# inside one chroot and pushes them to the GXDE Arch repo.  Each module is
+# built from the arch/PKGBUILD (or root PKGBUILD) shipped in its own
+# repository and installed right after, so later modules link against the
+# fresh build.  pkgrel is bumped automatically when the repo already carries
+# the same version.
+
+name: Building GXDE Arch Package Batch
+
+on:
+  workflow_call:
+    inputs:
+      name:
+        description: Batch name, used for logs and artifact names
+        type: string
+        required: true
+      modules:
+        description: >-
+          Whitespace separated <repo>:<branch or tag>[:<package>] entries in
+          dependency order.  <package> limits a split package to the one
+          package that is collected and pushed.
+        type: string
+        required: true
+
+env:
+  REPOSITORY: https://github.com/GXDE-OS/GXDE
+  ORGANIZATION: https://github.com/GXDE-OS
+  BOTTLEPATH: system-bottle
+  GXDE_ARCH_REPO: https://repo1.gxde.top/gxde-arch
+
+jobs:
+  build:
+    if: github.repository_owner == 'GXDE-OS'
+    name: ${{ matrix.arch }}-arch
+    runs-on: ${{ matrix.runner }}
+    strategy:
+      fail-fast: false
+      matrix:
+        include:
+          - arch: x86_64
+            runner: ubuntu-24.04
+          - arch: aarch64
+            runner: ubuntu-24.04-arm
+    env:
+      MODULES: ${{ inputs.modules }}
+    steps:
+      - name: Clone Repository To Get Script
+        run: |
+          git clone $REPOSITORY --depth=1
+          mv $(basename $REPOSITORY)/* . -v
+          mv $(basename $REPOSITORY)/.* . -v | true
+
+      - name: Configure Base System
+        run: |
+          read -r first _ <<< "$MODULES"
+          ref=${first#*:}
+          bash .github/workflows/configure-building-enviroment-arch.sh ${{ matrix.arch }} \
+            $REPOSITORY \
+            $ORGANIZATION/${first%%:*} \
+            ${ref%%:*} \
+            $GXDE_ARCH_REPO
+
+      - name: Clone Modules
+        run: |
+          # 第一个模块已由环境配置脚本克隆 ・ The first module was cloned by the configure script.
+          read -r _ rest <<< "$MODULES"
+          for module in $rest; do
+            name=${module%%:*}
+            ref=${module#*:}
+            sudo chroot $BOTTLEPATH sudo -H -u builder \
+              git clone $ORGANIZATION/$name -b ${ref%%:*} /home/builder/$name
+          done
+
+      - name: Building ${{ inputs.name }}
+        run: |
+          mkdir -p packages
+          for module in $MODULES; do
+            name=${module%%:*}
+            rest=${module#*:}
+            only=
+            [[ $rest == *:* ]] && only=${rest#*:}
+            repoPath=/home/builder/$name
+            if [[ -f $BOTTLEPATH$repoPath/arch/PKGBUILD ]]; then
+              buildPath=$repoPath/arch
+            elif [[ -f $BOTTLEPATH$repoPath/PKGBUILD ]]; then
+              buildPath=$repoPath
+            else
+              echo "::error::No PKGBUILD found in $name ($module)"
+              exit 1
+            fi
+            echo "::group::$module"
+
+            # 上游 PKGBUILD 的 pkgver 是写死的，若源中已有相同 pkgver，则将 pkgrel 提升为源中的值 +1，
+            # 以便用户能通过 pacman 收到更新
+            # The upstream PKGBUILDs pin pkgver, so when the GXDE repo already
+            # has the same pkgver, bump pkgrel past the repo's one so pacman
+            # picks the rebuild up as an upgrade.
+            # 先运行 pkgver()，让 .SRCINFO 中是实际版本 ・ Run pkgver() first so .SRCINFO has the real version.
+            read -r pkgname pkgver pkgrel < <(sudo chroot $BOTTLEPATH sudo -H -u builder bash -c \
+              "cd $buildPath && makepkg -od --noprepare --noconfirm >&2 && makepkg --printsrcinfo" | awk -F' = ' '
+                $1 == "pkgname" && !n { n = $2 }
+                $1 == "\tpkgver" { v = $2 }
+                $1 == "\tpkgrel" { r = $2 }
+                END { print n, v, r }')
+            pkgname=${only:-$pkgname}
+            remote=$(sudo chroot $BOTTLEPATH env LC_ALL=C pacman -Si gxde/$pkgname 2>/dev/null \
+              | sed -n 's/^Version *: *//p')
+            remoteVer=${remote#*:}
+            remoteVer=${remoteVer%-*}
+            remoteRel=${remote##*-}
+            if [[ -n $remote && $remoteVer == "$pkgver" ]] && (( ${remoteRel%%.*} >= ${pkgrel%%.*} )); then
+              newRel=$(( ${remoteRel%%.*} + 1 ))
+              echo "$pkgname: repo has $remote, bumping pkgrel $pkgrel -> $newRel"
+              sudo chroot $BOTTLEPATH sudo -H -u builder \
+                sed -i "s/^pkgrel=.*/pkgrel=$newRel/" $buildPath/PKGBUILD
+            else
+              echo "$pkgname: repo has ${remote:-nothing}, keeping $pkgver-$pkgrel"
+            fi
+
+            sudo chroot $BOTTLEPATH sudo -H -u builder bash -c \
+              "cd $buildPath && makepkg -si --noconfirm --needed"
+            # 指定了软件包时只收集它，避免把拆分包中的其他包一并推送
+            # With <package> given, collect only it and leave the rest of the
+            # split package out of the push.
+            sudo find $BOTTLEPATH$buildPath -maxdepth 1 -name "${only:+$only-$pkgver-}*.pkg.tar.*" ! -name '*.sig' \
+              -exec cp -v {} packages/ \;
+            echo "::endgroup::"
+          done
+          sudo chown -R $(id -u):$(id -g) packages
+          ls -l packages
+
+      - name: Remove Debug Package
+        run: |
+          rm -fv packages/*-debug-*.pkg.tar.*
+
+      - name: Pack tar
+        run: |
+          cd packages
+          tar -cvf ../arch-${{ matrix.arch }}-$(date +%s).tar *.pkg.tar.*
+
+      - name: Upload Artifact
+        uses: actions/upload-artifact@v4
+        with:
+          name: ${{ inputs.name }}-arch-${{ matrix.arch }}
+          path: packages/*.pkg.tar.*
+
+      - name: Push
+        env:
+          UPASSWD: ${{ secrets.PASSWD }}
+          UUSERS: ${{ secrets.USERS }}
+          UHOST: ${{ secrets.HOST }}
+          UPATH: ${{ secrets.UPATH }}
+          UPROGRAM_ARCH: ${{ secrets.UPROGRAM_ARCH }}
+          UPORT: ${{ secrets.UPORT }}
+        run: |
+          if [[ -z "$UPROGRAM_ARCH" ]]; then
+            echo "::warning::UPROGRAM_ARCH is not set, skip uploading Arch packages"
+            exit 0
+          fi
+          sudo apt update
+          sudo apt install sshpass -y
+          mkdir -p ~/.ssh/
+          ssh-keyscan -p $UPORT -H $UHOST >> ~/.ssh/known_hosts
+          tarName=$(ls | grep '^arch-.*\.tar$' | head -n 1)
+          sshpass -p "$UPASSWD" rsync -e "ssh -p $UPORT" $tarName $UUSERS@$UHOST:$UPATH
+          sshpass -p "$UPASSWD" ssh $UUSERS@$UHOST -p $UPORT $UPROGRAM_ARCH ${{ matrix.arch }} $UPATH/$tarName > /dev/null

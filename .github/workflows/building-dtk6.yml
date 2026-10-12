@@ -1,0 +1,94 @@
+# 构建 GXDE DTK6 的 Arch 软件包（以及 Qt6 版本探针）并推送到 GXDE Arch 源。
+# dtkcommon-git 由 DTK5 批量构建提供，此处从 GXDE Arch 源安装。
+# -----------------------------------------------------------------------------
+# Builds the GXDE DTK6 Arch packages (plus the Qt 6 version probe) and pushes
+# them to the GXDE Arch repo.  dtkcommon-git comes from the DTK5 batch and is
+# installed from the GXDE Arch repo here.
+
+name: Building GXDE DTK6 Arch Packages
+run-name: Building GXDE DTK6 Arch Packages
+
+on:
+  workflow_dispatch:
+    inputs:
+      dtk6log:
+        description: dtk6log branch or tag
+        default: master
+      dtk6core:
+        description: dtk6core branch or tag
+        default: master
+      dtk6gui:
+        description: dtk6gui branch or tag
+        default: master
+      dtk6widget:
+        description: dtk6widget branch or tag
+        default: master
+      dtk6declarative:
+        description: dtk6declarative branch or tag
+        default: master
+      dde_qt6platform_plugins:
+        description: dde-qt6platform-plugins branch or tag
+        default: master
+      qt6integration:
+        description: qt6integration branch or tag
+        default: master
+      qt_probe:
+        description: gxde-archpkg branch or tag for the Qt probe
+        default: qt_version_probe
+  # 供 Qt 版本巡检工作流调用 ・ Called by the Qt version watch workflow.
+  workflow_call:
+    inputs:
+      dtk6log:
+        description: dtk6log branch or tag
+        type: string
+        default: master
+      dtk6core:
+        description: dtk6core branch or tag
+        type: string
+        default: master
+      dtk6gui:
+        description: dtk6gui branch or tag
+        type: string
+        default: master
+      dtk6widget:
+        description: dtk6widget branch or tag
+        type: string
+        default: master
+      dtk6declarative:
+        description: dtk6declarative branch or tag
+        type: string
+        default: master
+      dde_qt6platform_plugins:
+        description: dde-qt6platform-plugins branch or tag
+        type: string
+        default: master
+      qt6integration:
+        description: qt6integration branch or tag
+        type: string
+        default: master
+      qt_probe:
+        description: gxde-archpkg branch or tag for the Qt probe
+        type: string
+        default: qt_version_probe
+
+jobs:
+  build:
+    uses: ./.github/workflows/building-arch-batch.yml
+    secrets: inherit
+    with:
+      name: dtk6
+      # 构建顺序即依赖顺序；Qt 探针随 DTK6 一起重建，使其编译时 Qt 版本与 DTK6 一致，
+      # 且只推送 gxde-arch-qt-probe，以免影响另一个 Qt 主版本的巡检
+      # Build order is dependency order.  The Qt probe is rebuilt alongside
+      # DTK6 so its compile-time Qt matches the one DTK6 was built against,
+      # and only gxde-arch-qt-probe is pushed so the other Qt major's watch
+      # is left alone.
+      modules: >-
+        dtk6log:${{ inputs.dtk6log }}
+        dtk6core:${{ inputs.dtk6core }}
+        dtk6gui:${{ inputs.dtk6gui }}
+        dtk6widget:${{ inputs.dtk6widget }}
+        dtk6declarative:${{ inputs.dtk6declarative }}
+        dde-qt6platform-plugins:${{ inputs.dde_qt6platform_plugins }}
+        qt6integration:${{ inputs.qt6integration }}
+        gxde-archpkg:${{ inputs.qt_probe }}:gxde-arch-qt-probe

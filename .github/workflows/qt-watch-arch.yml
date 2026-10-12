@@ -1,0 +1,132 @@
+# 在 x86_64 与 aarch64 上运行 GXDE Arch 源中的 Qt 版本探针。探针与对应的批量构建一同构建，
+# 它比较自身编译时的 Qt 版本与 Arch 上游，任一架构报告不一致（退出码 100/101）即输出 rebuild=true。
+# -----------------------------------------------------------------------------
+# Runs a Qt version probe from the GXDE Arch repo on x86_64 and aarch64.  The
+# probe is built together with its package batch and compares its own
+# compile-time Qt with Arch upstream; a mismatch on any architecture (exit
+# code 100/101) yields rebuild=true.
+
+name: Watching Qt Version
+
+on:
+  workflow_call:
+    inputs:
+      probe_package:
+        description: Probe package in the GXDE Arch repo
+        type: string
+        required: true
+      probe_binary:
+        description: Probe executable inside the package
+        type: string
+        required: true
+    outputs:
+      rebuild:
+        description: Whether any architecture reported a Qt version mismatch
+        value: ${{ jobs.decide.outputs.rebuild }}
+
+env:
+  REPOSITORY: https://github.com/GXDE-OS/GXDE
+  BOTTLEPATH: system-bottle
+  GXDE_ARCH_REPO: https://repo1.gxde.top/gxde-arch
+  PROBE_PACKAGE: ${{ inputs.probe_package }}
+  PROBE_BINARY: ${{ inputs.probe_binary }}
+
+jobs:
+  probe:
+    if: github.repository_owner == 'GXDE-OS'
+    name: ${{ matrix.arch }}-probe
+    runs-on: ${{ matrix.runner }}
+    strategy:
+      fail-fast: false
+      matrix:
+        include:
+          - arch: x86_64
+            runner: ubuntu-24.04
+          - arch: aarch64
+            runner: ubuntu-24.04-arm
+    steps:
+      - name: Clone Repository To Get Script
+        run: |
+          git clone $REPOSITORY --depth=1
+          mv $(basename $REPOSITORY)/* . -v
+          mv $(basename $REPOSITORY)/.* . -v | true
+
+      - name: Configure Base System
+        run: |
+          bash .github/workflows/configure-building-enviroment-arch.sh ${{ matrix.arch }} \
+            $REPOSITORY \
+            https://github.com/$GITHUB_REPOSITORY \
+            ${{ github.ref_name }} \
+            $GXDE_ARCH_REPO
+
+      - name: Run Qt Probe
+        run: |
+          # 环境脚本在 GXDE 源不可达时会移除它，此时无法判断，直接报错
+          # The configure script drops the GXDE repo when it is unreachable, we
+          # can't tell anything without it.
+          if ! sudo chroot $BOTTLEPATH pacman -Sl gxde > /dev/null; then
+            echo "::error::GXDE Arch repo is unavailable"
+            exit 1
+          fi
+
+          # 源中还没有探针时视为需要重建，重建会把探针一起发布
+          # No probe in the repo yet means the batch was never built with one,
+          # so rebuild, which publishes the probe as well.
+          if ! sudo chroot $BOTTLEPATH pacman -S --noconfirm gxde/$PROBE_PACKAGE; then
+            echo "::warning::$PROBE_PACKAGE is not in the GXDE Arch repo, requesting rebuild"
+            echo mismatch > result-${{ matrix.arch }}
+            exit 0
+          fi
+
+          set +e
+          sudo chroot $BOTTLEPATH $PROBE_BINARY
+          code=$?
+          set -e
+          case $code in
+            0)
+              echo match > result-${{ matrix.arch }}
+              ;;
+            100|101)
+              echo "::notice::Qt version mismatch on ${{ matrix.arch }} (exit $code)"
+              echo mismatch > result-${{ matrix.arch }}
+              ;;
+            *)
+              echo "::error::$PROBE_BINARY failed with exit code $code"
+              exit 1
+              ;;
+          esac
+
+      - name: Upload Result
+        uses: actions/upload-artifact@v4
+        with:
+          name: ${{ inputs.probe_package }}-${{ matrix.arch }}
+          path: result-${{ matrix.arch }}
+
+  # 某一架构探测出错时，仍按另一架构的结果决定 ・ Still decide on the other architecture if one probe errored.
+  decide:
+    needs: probe
+    if: ${{ !cancelled() && needs.probe.result != 'skipped' }}
+    runs-on: ubuntu-24.04
+    outputs:
+      rebuild: ${{ steps.decide.outputs.rebuild }}
+    steps:
+      - uses: actions/download-artifact@v4
+        with:
+          pattern: ${{ inputs.probe_package }}-*
+          merge-multiple: true
+
+      - name: Decide
+        id: decide
+        run: |
+          shopt -s nullglob
+          results=(result-*)
+          if (( ${#results[@]} == 0 )); then
+            echo "::error::No probe produced a result"
+            exit 1
+          fi
+          grep -H . "${results[@]}"
+          if grep -qx mismatch "${results[@]}"; then
+            echo "rebuild=true" >> $GITHUB_OUTPUT
+          else
+            echo "rebuild=false" >> $GITHUB_OUTPUT
+          fi
