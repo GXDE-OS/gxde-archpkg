@@ -23,8 +23,12 @@ find_package(QT NAMES Qt6 Qt5 REQUIRED COMPONENTS Core Network)
 find_package(Qt${QT_VERSION_MAJOR} REQUIRED COMPONENTS Core Network)
 find_package(LibArchive REQUIRED)
 
-add_executable(gxde_arch_qt_probe src/main.cc)
+add_executable(gxde_arch_qt_probe
+  src/main.cc
+)
+
 target_link_libraries(gxde_arch_qt_probe PRIVATE
-    Qt${QT_VERSION_MAJOR}::Core
-    Qt${QT_VERSION_MAJOR}::Network
-    LibArchive::LibArchive)
+  Qt${QT_VERSION_MAJOR}::Core
+  Qt${QT_VERSION_MAJOR}::Network
+  LibArchive::LibArchive
+)
