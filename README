@@ -6,4 +6,4 @@ This application checks whether your Qt version matches Archlinux upstream.
 - If your Qt version matches remote version then this program returns 0.
 
 ### License
-*GXDE Archlinux Qt Probe* is licensed under GPLv3+.
+*GXDE Archlinux Qt Probe* is licensed under *[GNU GENERAL PUBLIC LICENSE Version 3, 29 June 2007](./LICENSE)*.
