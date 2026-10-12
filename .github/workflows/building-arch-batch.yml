@@ -101,13 +101,29 @@ jobs:
             # has the same pkgver, bump pkgrel past the repo's one so pacman
             # picks the rebuild up as an upgrade.
             # 先运行 pkgver()，让 .SRCINFO 中是实际版本 ・ Run pkgver() first so .SRCINFO has the real version.
-            read -r pkgname pkgver pkgrel < <(sudo chroot $BOTTLEPATH sudo -H -u builder bash -c \
-              "cd $buildPath && makepkg -od --noprepare --noconfirm >&2 && makepkg --printsrcinfo" | awk -F' = ' '
+            srcinfo=$(sudo chroot $BOTTLEPATH sudo -H -u builder bash -c \
+              "cd $buildPath && makepkg -od --noprepare --noconfirm >&2 && makepkg --printsrcinfo")
+            read -r pkgname pkgver pkgrel < <(awk -F' = ' '
                 $1 == "pkgname" && !n { n = $2 }
                 $1 == "\tpkgver" { v = $2 }
                 $1 == "\tpkgrel" { r = $2 }
-                END { print n, v, r }')
+                END { print n, v, r }' <<< "$srcinfo")
             pkgname=${only:-$pkgname}
+
+            # 同一 chroot 中先前模块装入的包可能与本模块冲突（如 dtkwidget2-dev-git 与
+            # dtkwidget-git 共用开发文件路径），构建前将其卸载，使环境与单独构建时一致
+            # Packages installed by earlier modules may conflict with this one
+            # (e.g. dtkwidget2-dev-git shares its development files with
+            # dtkwidget-git).  Remove them before building, so the module builds
+            # as it would in a clean chroot.
+            conflicts=$(awk -F' = ' '$1 == "\tconflicts" { sub(/[<>=].*/, "", $2); print $2 }' <<< "$srcinfo" | sort -u)
+            if [[ -n $conflicts ]]; then
+              installed=$(sudo chroot $BOTTLEPATH pacman -Qq $conflicts 2>/dev/null) || true
+              if [[ -n $installed ]]; then
+                echo "$name: removing conflicting" $installed
+                sudo chroot $BOTTLEPATH pacman -Rdd --noconfirm $installed
+              fi
+            fi
             remote=$(sudo chroot $BOTTLEPATH env LC_ALL=C pacman -Si gxde/$pkgname 2>/dev/null \
               | sed -n 's/^Version *: *//p')
             remoteVer=${remote#*:}

@@ -1,10 +1,12 @@
-# 构建 GXDE DTK5 的 Arch 软件包（以及 Qt5 版本探针）并推送到 GXDE Arch 源。
+# 构建 GXDE DTK5 与基于其上的 DTK2 的 Arch 软件包（以及 Qt5 版本探针）并推送到 GXDE Arch 源。
+# DTK2 依赖 DTK5 core，因此在 DTK5 之后构建。
 # -----------------------------------------------------------------------------
-# Builds the GXDE DTK5 Arch packages (plus the Qt 5 version probe) and pushes
-# them to the GXDE Arch repo.
+# Builds the GXDE DTK5 Arch packages, the DTK2 stack built on top of it, and
+# the Qt 5 version probe, then pushes them to the GXDE Arch repo.  DTK2 links
+# against DTK5 core, so it comes after DTK5.
 
-name: Building GXDE DTK5 Arch Packages
-run-name: Building GXDE DTK5 Arch Packages
+name: Building GXDE DTK5 And DTK2 Arch Packages
+run-name: Building GXDE DTK5 And DTK2 Arch Packages
 
 on:
   workflow_dispatch:
@@ -23,6 +25,18 @@ on:
         default: master
       dtk5widget:
         description: dtk5widget branch or tag
+        default: master
+      dtk2core:
+        description: dtk2core branch or tag
+        default: master
+      gxde_qt_dbus_factory:
+        description: gxde-qt-dbus-factory branch or tag
+        default: master
+      dtk2widget:
+        description: dtk2widget branch or tag
+        default: master
+      gxde_qt5integration:
+        description: gxde-qt5integration branch or tag
         default: master
       qt_probe:
         description: gxde-archpkg branch or tag for the Qt probe
@@ -50,6 +64,22 @@ on:
         description: dtk5widget branch or tag
         type: string
         default: master
+      dtk2core:
+        description: dtk2core branch or tag
+        type: string
+        default: master
+      gxde_qt_dbus_factory:
+        description: gxde-qt-dbus-factory branch or tag
+        type: string
+        default: master
+      dtk2widget:
+        description: dtk2widget branch or tag
+        type: string
+        default: master
+      gxde_qt5integration:
+        description: gxde-qt5integration branch or tag
+        type: string
+        default: master
       qt_probe:
         description: gxde-archpkg branch or tag for the Qt probe
         type: string
@@ -73,4 +103,8 @@ jobs:
         dtk5core:${{ inputs.dtk5core }}
         dtk5gui:${{ inputs.dtk5gui }}
         dtk5widget:${{ inputs.dtk5widget }}
+        dtk2core:${{ inputs.dtk2core }}
+        gxde-qt-dbus-factory:${{ inputs.gxde_qt_dbus_factory }}
+        dtk2widget:${{ inputs.dtk2widget }}
+        gxde-qt5integration:${{ inputs.gxde_qt5integration }}
         gxde-archpkg:${{ inputs.qt_probe }}:gxde-arch-qt5-probe
