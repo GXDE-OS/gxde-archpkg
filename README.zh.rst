@@ -12,6 +12,26 @@ GXDE Archlinux打包
 
 本仓库含有GXDE在AUR上的所有 ``PKGBUILD`` 文件，每个Git子模块都是一个独立的部件包。
 
+Pacman 源
+---------
+
+GXDE CI 会将预编译的软件包发布到 pacman 源，支持 ``x86_64`` 与 ``aarch64`` （Arch Linux ARM）。将以下内容追加到 ``/etc/pacman.conf`` 末尾：
+
+.. code-block:: ini
+
+   [gxde]
+   SigLevel = Optional TrustAll
+   Server = https://repo1.gxde.top/gxde-arch/$arch
+
+然后刷新数据库：
+
+.. code-block:: sh
+
+   sudo pacman -Syu
+
+.. note::
+   软件包目前尚未签名，因此需要 ``SigLevel = Optional TrustAll`` 。源中的组件是拆开的独立软件包（如 ``dtkcore-git`` ），与下方 AUR 合集包（如 ``gxde-dtk5-git`` ）安装相同的文件，请二选一，不要混用。
+
 组件
 ----
 

@@ -12,6 +12,26 @@ Introduction
 
 This repository contains the ``PKGBUILD`` file that we submitted to the AUR repository. Each git submodule is a package component.
 
+Pacman Repository
+-----------------
+
+GXDE CI publishes prebuilt packages to a pacman repository for ``x86_64`` and ``aarch64`` (Arch Linux ARM). Append it to the end of ``/etc/pacman.conf``:
+
+.. code-block:: ini
+
+   [gxde]
+   SigLevel = Optional TrustAll
+   Server = https://repo1.gxde.top/gxde-arch/$arch
+
+Then refresh the databases:
+
+.. code-block:: sh
+
+   sudo pacman -Syu
+
+.. note::
+   The packages are not signed yet, hence ``SigLevel = Optional TrustAll``. The repository splits components into separate packages (e.g. ``dtkcore-git``) that install the same files as the AUR bundles below (e.g. ``gxde-dtk5-git``), so use either the repository or the AUR packages, not both.
+
 Parts
 -----
 
