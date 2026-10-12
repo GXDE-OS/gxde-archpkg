@@ -19,7 +19,13 @@ project(gxde_arch_qt_probe LANGUAGES CXX)
 set(CMAKE_CXX_STANDARD 17)
 set(CMAKE_CXX_STANDARD_REQUIRED ON)
 
-find_package(QT NAMES Qt6 Qt5 REQUIRED COMPONENTS Core Network)
+set(PROBE_QT_MAJOR_VERSION "" CACHE STRING
+  "Qt major version to build against, leave empty to prefer Qt6")
+if(PROBE_QT_MAJOR_VERSION)
+  set(QT_VERSION_MAJOR ${PROBE_QT_MAJOR_VERSION})
+else()
+  find_package(QT NAMES Qt6 Qt5 REQUIRED COMPONENTS Core Network)
+endif()
 find_package(Qt${QT_VERSION_MAJOR} REQUIRED COMPONENTS Core Network)
 find_package(LibArchive REQUIRED)
 

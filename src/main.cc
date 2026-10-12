@@ -18,7 +18,6 @@
 #include <QCoreApplication>
 #include <QJsonDocument>
 #include <QJsonObject>
-#include <QLibraryInfo>
 #include <QNetworkAccessManager>
 #include <QNetworkReply>
 #include <QNetworkRequest>
@@ -29,10 +28,8 @@
 
 #include <iostream>
 
-#include <qbytearrayview.h>
 #include <qcontainerfwd.h>
 #include <qjsonobject.h>
-#include <qlibraryinfo.h>
 #include <qnetworkaccessmanager.h>
 #include <qnetworkreply.h>
 #include <qnetworkrequest.h>
@@ -92,10 +89,13 @@ int main(int argc, char *argv[]) {
   std::cout << "[I] (Main) Init: Any other return codes indicates an error."
     << std::endl;
 
-  const QVersionNumber linked_qt_runtime_ver = QLibraryInfo::version();
+  // Compare the Qt this binary was compiled against rather than the one it
+  // runs on, so a stale build reports a mismatch once upstream Qt moves on.
+  const QVersionNumber built_qt_ver = QVersionNumber::fromString(
+    QStringLiteral(QT_VERSION_STR));
   const QString cpu_arch = QSysInfo::buildCpuArchitecture();
   const QString pkg_base = QStringLiteral("qt%1-base").arg(
-    linked_qt_runtime_ver.majorVersion());
+    built_qt_ver.majorVersion());
 
   OnlineUpstream query_gen;
   if (cpu_arch == QLatin1String("x86_64")) {
@@ -205,7 +205,7 @@ int main(int argc, char *argv[]) {
     }
 
     const int comparation_result = QVersionNumber::compare(
-      linked_qt_runtime_ver, upstream_version);
+      built_qt_ver, upstream_version);
     if (comparation_result > 0) {
       std::cout << "[I] (Main) Compare: Local version is newer than upstream."
         << std::endl;

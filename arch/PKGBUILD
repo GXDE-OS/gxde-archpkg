@@ -1,15 +1,15 @@
 # Maintainer: CharOfString <root@charofstring.cc>
 
-pkgname=gxde-arch-qt-probe
-_bin=gxde_arch_qt_probe
-pkgver=r5.g1d988ee
+# Builds the working tree this PKGBUILD lives in; run makepkg from arch/.
+pkgbase=gxde-arch-qt-probe
+pkgname=(gxde-arch-qt-probe gxde-arch-qt5-probe)
+pkgver=r8.gd7e7d95
 pkgrel=1
-pkgdesc='Checks whether the local Qt version matches Arch Linux upstream'
+pkgdesc='Checks whether the Qt version it was built against matches Arch Linux upstream'
 arch=(x86_64 aarch64)
 url='https://github.com/GXDE-OS/gxde-archpkg'
 license=(GPL-3.0-or-later)
-depends=(qt6-base libarchive gcc-libs glibc)
-makedepends=(git cmake)
+makedepends=(git cmake qt6-base qt5-base libarchive)
 
 _srcroot="$startdir/.."
 
@@ -19,14 +19,29 @@ pkgver() {
 }
 
 build() {
-  cmake -B build -S "$_srcroot" \
-    -DCMAKE_BUILD_TYPE=None \
-    -DCMAKE_INSTALL_PREFIX=/usr \
-    -Wno-dev
-  cmake --build build
+  local _qt
+  for _qt in 6 5; do
+    cmake -B "build-qt$_qt" -S "$_srcroot" \
+      -DCMAKE_BUILD_TYPE=None \
+      -DCMAKE_INSTALL_PREFIX=/usr \
+      -DPROBE_QT_MAJOR_VERSION=$_qt \
+      -Wno-dev
+    cmake --build "build-qt$_qt"
+  done
 }
 
-package() {
-  install -Dm755 "build/$_bin" "$pkgdir/usr/bin/$_bin"
+package_gxde-arch-qt-probe() {
+  pkgdesc='Checks whether the Qt 6 version it was built against matches Arch Linux upstream'
+  depends=(qt6-base libarchive gcc-libs glibc)
+
+  install -Dm755 build-qt6/gxde_arch_qt_probe "$pkgdir/usr/bin/gxde_arch_qt_probe"
+  install -Dm644 "$_srcroot/README.md" "$pkgdir/usr/share/doc/$pkgname/README.md"
+}
+
+package_gxde-arch-qt5-probe() {
+  pkgdesc='Checks whether the Qt 5 version it was built against matches Arch Linux upstream'
+  depends=(qt5-base libarchive gcc-libs glibc)
+
+  install -Dm755 build-qt5/gxde_arch_qt_probe "$pkgdir/usr/bin/gxde_arch_qt5_probe"
   install -Dm644 "$_srcroot/README.md" "$pkgdir/usr/share/doc/$pkgname/README.md"
 }
