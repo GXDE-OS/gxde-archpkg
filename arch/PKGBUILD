@@ -5,9 +5,9 @@
 # components, but install the individual packages from the GXDE Arch repo.
 pkgbase=gxde-meta-packages
 pkgname=('gxde-dtk5-git' 'gxde-dtk6-git' 'gxde-dtk2-git' 'gxde-dtk2-qt6-git' 'gxde-infra-git'
-         'gxde-core-git' 'gxde-desktop-extras')
+         'gxde-core-git' 'gxde-desktop-extras' 'gxde-desktop-full')
 pkgver=2026.10.14
-pkgrel=3
+pkgrel=4
 arch=('any')
 url="https://github.com/GXDE-OS/gxde-archpkg"
 license=('MIT')
@@ -105,5 +105,12 @@ package_gxde-desktop-extras() {
            'deepin-clone-git' 'deepin-camera-git' 'gxde-calendar-git' 'deepin-calculator-git'
            'gxde-boot-maker-git' 'flakewm-git' 'flakewm-client-git' 'gxde-flake-session-git'
            'dde-clipboard-git')
+  _license
+}
+
+package_gxde-desktop-full() {
+  pkgdesc='Full GXDE OS desktop: every GXDE meta package (meta package)'
+  depends=('gxde-dtk5-git' 'gxde-dtk6-git' 'gxde-dtk2-git' 'gxde-dtk2-qt6-git' 'gxde-infra-git'
+           'gxde-core-git' 'gxde-desktop-extras')
   _license
 }

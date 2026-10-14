@@ -14,6 +14,7 @@ everything themselves.
 | `gxde-infra-git` | GXDE infrastructure components |
 | `gxde-core-git` | GXDE desktop core components |
 | `gxde-desktop-extras` | GXDE desktop applications (the optional AUR packages) |
+| `gxde-desktop-full` | All of the meta packages above |
 
 The packages are built by GitHub Actions; run the workflow by hand to publish
 a new version.
