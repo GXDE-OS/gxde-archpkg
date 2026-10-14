@@ -1,0 +1,27 @@
+# 构建 meta_packages 分支中的 GXDE Arch 元包并推送到 GXDE Arch 源。手动触发的工作流只能从默认分支
+# 运行，因此入口放在这里。构建后元包会装进 chroot，任何依赖尚未发布时构建失败，不会推送装不上的元包。
+# -----------------------------------------------------------------------------
+# Builds the GXDE Arch meta packages kept on the meta_packages branch and
+# pushes them to the GXDE Arch repo.  Manually triggered workflows only run
+# from the default branch, so the entry point lives here.  The meta packages
+# are installed into the chroot after the build, so the run fails, and nothing
+# is pushed, while any of their dependencies is not published yet.
+
+name: Building GXDE Arch Meta Packages
+run-name: Building GXDE Arch Meta Packages
+
+on:
+  workflow_dispatch:
+    inputs:
+      meta_packages:
+        description: gxde-archpkg branch or tag for the meta packages
+        default: meta_packages
+
+jobs:
+  build:
+    uses: ./.github/workflows/building-arch-batch.yml
+    secrets: inherit
+    with:
+      name: meta
+      modules: >-
+        gxde-archpkg:${{ inputs.meta_packages }}
