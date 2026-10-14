@@ -1,9 +1,10 @@
 # 构建 GXDE DTK5 与基于其上的 DTK2 的 Arch 软件包（以及 Qt5 版本探针）并推送到 GXDE Arch 源。
-# DTK2 依赖 DTK5 core，因此在 DTK5 之后构建。
+# DTK2 依赖 DTK5 core，因此在 DTK5 之后构建。全部成功推送后，再重建使用 Qt5 私有 API 的应用。
 # -----------------------------------------------------------------------------
 # Builds the GXDE DTK5 Arch packages, the DTK2 stack built on top of it, and
 # the Qt 5 version probe, then pushes them to the GXDE Arch repo.  DTK2 links
-# against DTK5 core, so it comes after DTK5.
+# against DTK5 core, so it comes after DTK5.  Once everything is pushed, the
+# applications using Qt 5 private API are rebuilt.
 
 name: Building GXDE DTK5 And DTK2 Arch Packages
 run-name: Building GXDE DTK5 And DTK2 Arch Packages
@@ -108,3 +109,22 @@ jobs:
         dtk2widget:${{ inputs.dtk2widget }}
         gxde-qt5integration:${{ inputs.gxde_qt5integration }}
         gxde-archpkg:${{ inputs.qt_probe }}:gxde-arch-qt5-probe
+
+  # 等 DTK5 与 DTK2 两个架构都推送成功后再开始，从 GXDE Arch 源取得刚发布的 DTK2
+  # Starts only after DTK5 and DTK2 were pushed on both architectures, and
+  # picks the fresh DTK2 up from the GXDE Arch repo.
+  apps:
+    needs: build
+    uses: ./.github/workflows/building-arch-batch.yml
+    secrets: inherit
+    with:
+      name: dtk5-apps
+      # workflow_dispatch 最多 10 个输入，应用固定使用其 Arch 包所在的分支。deepin-clone 继承了
+      # QAbstractFileEngine 等 Qt5 私有类，只在构建时的 Qt 版本下可靠，Qt5 升级后同样需要重建
+      # workflow_dispatch takes at most 10 inputs, so the applications always
+      # build the branch carrying their Arch package.  deepin-clone subclasses
+      # QAbstractFileEngine and other private Qt 5 classes, which only hold for
+      # the Qt release it was built against, so it is rebuilt on a Qt 5 update
+      # too.
+      modules: >-
+        deepin-clone:master
