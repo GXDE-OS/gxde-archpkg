@@ -1,0 +1,86 @@
+# Maintainer: CharOfString <root@charofstring.cc>
+
+# 与 AUR 上同名的打包合集对应的元包：涵盖相同的组件，但从 GXDE Arch 源安装各个软件包
+# Meta packages matching the AUR bundles of the same name: they cover the same
+# components, but install the individual packages from the GXDE Arch repo.
+pkgbase=gxde-meta-packages
+pkgname=('gxde-dtk5-git' 'gxde-dtk6-git' 'gxde-dtk2-git' 'gxde-dtk2-qt6-git' 'gxde-infra-git'
+         'gxde-core-git')
+pkgver=2026.10.14
+pkgrel=1
+arch=('any')
+url="https://github.com/GXDE-OS/gxde-archpkg"
+license=('MIT')
+source=()
+sha512sums=()
+
+# 直接使用 PKGBUILD 所在的 git 仓库作为源码 ・ Build from the git checkout this PKGBUILD lives in.
+_srcroot() {
+  git -C "$startdir" rev-parse --show-toplevel
+}
+
+_license() {
+  install -Dm644 "$(_srcroot)/LICENSE" "$pkgdir/usr/share/licenses/$pkgname/LICENSE"
+}
+
+package_gxde-dtk5-git() {
+  pkgdesc='GXDE OS fork of the Deepin Tool Kit 5 (meta package)'
+  depends=('dtkcommon-git' 'dtklog-git' 'dtkcore-git' 'dtkgui-git' 'dtkwidget-git')
+  _license
+}
+
+package_gxde-dtk6-git() {
+  pkgdesc='GXDE OS fork of the Deepin Tool Kit 6 (meta package)'
+  depends=('gxde-dtk5-git' 'dtk6log-git' 'dtk6core-git' 'dtk6gui-git' 'dtk6widget-git' 'dtk6declarative-git'
+           'deepin-qt6platform-plugins-git' 'deepin-qt6integration-git')
+  optdepends=('lshw: hardware info in DSysInfo')
+  _license
+}
+
+package_gxde-dtk2-git() {
+  pkgdesc='GXDE OS DTK2 fork, modified to work with DTK5 (meta package)'
+  depends=('gxde-dtk5-git' 'dtkcore2-git' 'deepin-qt-dbus-factory-git' 'dtkwidget2-git'
+           'gxde-qt5integration-git')
+  _license
+}
+
+package_gxde-dtk2-qt6-git() {
+  pkgdesc='Qt6 port of DTK2, on top of GXDE DTK6 (meta package)'
+  depends=('gxde-dtk6-git' 'dtk2widget-qt6-git' 'gxde-qt6integration-git')
+  _license
+}
+
+package_gxde-infra-git() {
+  pkgdesc='GXDE OS infrastructure components (meta package)'
+  depends=('gxde-dtk5-git' 'gxde-dtk2-git' 'gxde-dtk6-git' 'gxde-dtk2-qt6-git'
+           'golang-gxde-dev-git' 'gxde-k9-git' 'disomaster-qt6-git' 'gxde-api-git' 'libgnome-keyring-git'
+           'gxde-desktop-base-git' 'gxde-desktop-schemas-git' 'dframework-dbus-qt6-git'
+           'gxde-network-utils-qt6-git' 'udisks2-qt6-git' 'gxde-movie-git' 'libgxmr-git' 'libgxmr-qt6-git'
+           'libdbusmenu-qt6-git' 'xdg-desktop-portal-gxde-git')
+  optdepends=('gnome-keyring: secret storage backend for libgnome-keyring')
+  _license
+}
+
+package_gxde-core-git() {
+  pkgdesc='GXDE OS desktop core components set. Note that X11 is NO longer provided. (meta package)'
+  depends=('gxde-dtk5-git' 'gxde-dtk2-git' 'gxde-dtk6-git' 'gxde-dtk2-qt6-git' 'gxde-infra-git'
+           'gxde-account-faces-git' 'gxde-icon-theme-git' 'gxde-sea-icon-theme-git' 'deepin-gtk-theme-git'
+           'gxde-artwork-git' 'gxde-wallpapers-git' 'gxde-community-wallpapers-git'
+           'gxde-solidwallpapers-git' 'gxde-default-settings-git' 'gxde-default-settings-tuning-git'
+           'transhell-git' 'garma-git' 'gxde-app-installer-git' 'gxde-app-upgrader-git'
+           'gxde-app-uninstaller-git' 'gxde-shell-tools-git' 'gxde-sound-theme-git' 'gxde-polkit-agent-git'
+           'dpa-ext-gnomekeyring-git' 'gxde-installer-timezones-git' 'deepin-daemon-git' 'gxde-daemon-git'
+           'startgxde-git' 'deepin-menu-git' 'gxde-sni-server-git' 'gxde-dock-git'
+           'gxde-dock-onboard-plugin-git' 'gxde-globalmenu-service-git' 'gxde-wayland-gtk-menu-git'
+           'gxde-top-panel-plugins-git' 'dde-top-panel-plugins-git' 'gxde-top-panel-git'
+           'gxde-control-center-git' 'gxde-launcher-git' 'gxde-session-ui-git' 'zipu-git'
+           'gxde-shell-compressor-git' 'gxde-compressor-git' 'rofd-git' 'librofd-ffi-git'
+           'gxde-file-manager-git' 'gxde-desktop-panel-git' 'gxde-disk-mount-plugin-git'
+           'libgxde-file-manager-git' 'gxde-file-manager-integration-git' 'gxde-requ-git'
+           'gxde-time-screensaver-git' 'deepin-screensaver-git' 'deepin-screensaver-xscreensaver-data-git'
+           'util-dfm-git' 'deepin-pdfium-git' 'deepin-service-manager-git' 'dde-grand-search-git'
+           'gxde-terminal-git')
+  optdepends=('lightdm: display manager for lightdm-deepin-greeter'
+              'accountsservice: user account information for the session and control center')
+  _license
+}
