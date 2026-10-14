@@ -9,10 +9,34 @@
 虽然我们并不打算发行一个基于Archlinux的distro，我们还是会提供GXDE的Arch打包。
 
 ## 安装
+### GXDE Archlinux源
+我们在 https://repo.gxde.top/gxde-arch/ 上面提供一个Archlinux源，包含 `x86_64` 与 `aarch64`（Arch Linux ARM）的预编译软件包。
+
+将以下内容追加到 `/etc/pacman.conf` 末尾：
+```ini
+[gxde]
+SigLevel = Optional TrustAll
+Server = https://repo.gxde.top/gxde-arch/$arch
+```
+
+然后刷新数据库并更新系统：
+```shell
+$ sudo pacman -Syu
+```
+
+可以用以下命令列出源中的所有软件包：
+```shell
+$ pacman -Sl gxde
+```
+
+当前这个源没有签名，因此需要`SigLevel = Optional TrustAll`。我们计划在不久补上Arch包签名。
+
 ### 通过AUR
 > 当前，AUR上的GXDE包由@CharOfString维护。
 >
 > AUR包会从源码编译一切，所以如果跑了三个钟头还没结束是很正常的。
+>
+> AUR与GXDE Archlinux源是二选一的——这些包的上游仓库是同一个。
 
 请安装以下必要包：
 ```shell
@@ -49,11 +73,6 @@ $ paru -S gxde-dtk5-git gxde-dtk6-git gxde-dtk2-git gxde-dtk2-qt6-git gxde-infra
 - gxde-boot-maker-git
 - flakewm-git
 - dde-clipboard-git
-
-### GXDE Archlinux源
-我们在 https://repo.gxde.top/gxde-arch/ 上面提供一个Archlinux源。
-
-当前这个源没有签名，我们计划在不久补上Arch包签名。
 
 ## 本仓库的分支
 您可能会发现这个仓库几乎是空的。这完全正常，我们针对不同的任务使用了不同的分支，需要切换分支才能看到各个子项目。

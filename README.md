@@ -9,10 +9,34 @@ Welcome to the Homepage of GXDE Archlinux packaging, this repository hosts all t
 Although we're not planning to provide a full Archlinux-based distro, we're now working on the Archlinux packaging.
 
 ## Installation
+### GXDE Archlinux Pacman Source
+We provide an Archlinux pacman source at https://repo.gxde.top/gxde-arch/, with prebuilt packages for `x86_64` and `aarch64` (Arch Linux ARM).
+
+Append the following to the end of `/etc/pacman.conf`:
+```ini
+[gxde]
+SigLevel = Optional TrustAll
+Server = https://repo.gxde.top/gxde-arch/$arch
+```
+
+Then refresh the databases and upgrade:
+```shell
+$ sudo pacman -Syu
+```
+
+You can list all packages in the source with:
+```shell
+$ pacman -Sl gxde
+```
+
+Currently the source is not signed, hence `SigLevel = Optional TrustAll`. A signing will be provided soon.
+
 ### AUR
 > Currently, AUR packages are maintained by @CharOfString.
 >
 > The AUR packages complies everything from aource, so it is normal if the process took 3 hours.
+>
+> You must choose between the AUR and the GXDE Arch Linux repository —— the upstream repositories for these packages are the same.
 
 Please install these packages:
 ```shell
@@ -49,11 +73,6 @@ And here is a list of optional packages:
 - gxde-boot-maker-git
 - flakewm-git
 - dde-clipboard-git
-
-### GXDE Archlinux Pacman Source
-We provide an Archlinux pacman source at https://repo.gxde.top/gxde-arch/.
-
-Currently the source is not signed. A sigining will be provided soon.
 
 ## Repository Branch
 You may find this repository almost empty. That's completely normal for we use branches for different tasks. You will need to switch the branches to see the sub-projects.
