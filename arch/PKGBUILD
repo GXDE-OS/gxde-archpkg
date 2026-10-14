@@ -7,7 +7,7 @@ pkgbase=gxde-meta-packages
 pkgname=('gxde-dtk5-git' 'gxde-dtk6-git' 'gxde-dtk2-git' 'gxde-dtk2-qt6-git' 'gxde-infra-git'
          'gxde-core-git')
 pkgver=2026.10.14
-pkgrel=1
+pkgrel=2
 arch=('any')
 url="https://github.com/GXDE-OS/gxde-archpkg"
 license=('MIT')
@@ -25,7 +25,8 @@ _license() {
 
 package_gxde-dtk5-git() {
   pkgdesc='GXDE OS fork of the Deepin Tool Kit 5 (meta package)'
-  depends=('dtkcommon-git' 'dtklog-git' 'dtkcore-git' 'dtkgui-git' 'dtkwidget-git')
+  depends=('dtkcommon-git' 'dtklog-git' 'dtkcore-git' 'dtkgui-git' 'dtkwidget-git'
+           'deepin-qt5platform-plugins-git' 'deepin-qt5integration-git')
   _license
 }
 
@@ -79,7 +80,10 @@ package_gxde-core-git() {
            'libgxde-file-manager-git' 'gxde-file-manager-integration-git' 'gxde-requ-git'
            'gxde-time-screensaver-git' 'deepin-screensaver-git' 'deepin-screensaver-xscreensaver-data-git'
            'util-dfm-git' 'deepin-pdfium-git' 'deepin-service-manager-git' 'dde-grand-search-git'
-           'gxde-terminal-git')
+           'gxde-terminal-git'
+           # AUR 的合集不含合成器；GXDE Arch 源使用 Flake Wayland 合成器
+           # The AUR bundle has no compositor; the GXDE Arch repo uses the Flake Wayland compositor.
+           'flakewm-git' 'gxde-flake-session-git')
   optdepends=('lightdm: display manager for lightdm-deepin-greeter'
               'accountsservice: user account information for the session and control center')
   _license
