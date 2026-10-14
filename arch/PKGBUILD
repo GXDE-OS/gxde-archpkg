@@ -5,9 +5,9 @@
 # components, but install the individual packages from the GXDE Arch repo.
 pkgbase=gxde-meta-packages
 pkgname=('gxde-dtk5-git' 'gxde-dtk6-git' 'gxde-dtk2-git' 'gxde-dtk2-qt6-git' 'gxde-infra-git'
-         'gxde-core-git')
+         'gxde-core-git' 'gxde-desktop-extras')
 pkgver=2026.10.14
-pkgrel=2
+pkgrel=3
 arch=('any')
 url="https://github.com/GXDE-OS/gxde-archpkg"
 license=('MIT')
@@ -86,5 +86,24 @@ package_gxde-core-git() {
            'flakewm-git' 'gxde-flake-session-git')
   optdepends=('lightdm: display manager for lightdm-deepin-greeter'
               'accountsservice: user account information for the session and control center')
+  _license
+}
+
+package_gxde-desktop-extras() {
+  pkgdesc='GXDE OS desktop extra applications (meta package)'
+  # 对应 AUR 上的可选软件包；gxde-dtk5widget-dev-git 的开发文件已在 dtkwidget-git 中，
+  # gxde-dtk2widget-dev-git（dtkwidget2-dev-git）与 dtkwidget-git 冲突，因此不包含
+  # Covers the optional AUR packages.  The files of gxde-dtk5widget-dev-git are
+  # part of dtkwidget-git; gxde-dtk2widget-dev-git (dtkwidget2-dev-git)
+  # conflicts with dtkwidget-git and is left out.
+  depends=('dtkwidget-git' 'spark-webapp-runtime-git' 'gxde-voice-recorder-git' 'deepin-system-monitor-git'
+           'gxde-system-assistant-git' 'deepin-screen-recorder-git' 'deepin-compressor-git'
+           'deepin-reader-git' 'gxde-picker-git' 'gxde-ocr-git' 'gxde-music-git' 'deepin-log-viewer-git'
+           'liblogviewerplugin-git' 'gxde-image-viewer-git' 'gxde-hardware-viewer-git'
+           'gxde-font-installer-git' 'libgxde-font-installer-git' 'gxde-filetransfer-git' 'gxde-editor-git'
+           'gxde-downloader-git' 'gxde-dlna-caster-git' 'gxdm-git' 'gxdm-emergency-mode-git' 'gxde-dict-git'
+           'deepin-clone-git' 'deepin-camera-git' 'gxde-calendar-git' 'deepin-calculator-git'
+           'gxde-boot-maker-git' 'flakewm-git' 'flakewm-client-git' 'gxde-flake-session-git'
+           'dde-clipboard-git')
   _license
 }

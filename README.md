@@ -13,6 +13,7 @@ everything themselves.
 | `gxde-dtk2-qt6-git` | The Qt 6 port of DTK2 |
 | `gxde-infra-git` | GXDE infrastructure components |
 | `gxde-core-git` | GXDE desktop core components |
+| `gxde-desktop-extras` | GXDE desktop applications (the optional AUR packages) |
 
 The packages are built by GitHub Actions; run the workflow by hand to publish
 a new version.
