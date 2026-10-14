@@ -1,10 +1,12 @@
-# 构建 GXDE DTK5 与基于其上的 DTK2 的 Arch 软件包（以及 Qt5 版本探针）并推送到 GXDE Arch 源。
+# 构建 GXDE DTK5（含 Qt5 平台插件与主题集成）与基于其上的 DTK2 的 Arch 软件包（以及 Qt5 版本探针）
+# 并推送到 GXDE Arch 源。
 # DTK2 依赖 DTK5 core，因此在 DTK5 之后构建。全部成功推送后，再重建使用 Qt5 私有 API 的应用。
 # -----------------------------------------------------------------------------
-# Builds the GXDE DTK5 Arch packages, the DTK2 stack built on top of it, and
-# the Qt 5 version probe, then pushes them to the GXDE Arch repo.  DTK2 links
-# against DTK5 core, so it comes after DTK5.  Once everything is pushed, the
-# applications using Qt 5 private API are rebuilt.
+# Builds the GXDE DTK5 Arch packages (with the Qt 5 platform plugins and theme
+# integration), the DTK2 stack built on top of it, and the Qt 5 version probe,
+# then pushes them to the GXDE Arch repo.  DTK2 links against DTK5 core, so it
+# comes after DTK5.  Once everything is pushed, the applications using Qt 5
+# private API are rebuilt.
 
 name: Building GXDE DTK5 And DTK2 Arch Packages
 run-name: Building GXDE DTK5 And DTK2 Arch Packages
@@ -98,12 +100,19 @@ jobs:
       # DTK5 so its compile-time Qt matches the one DTK5 was built against,
       # and only gxde-arch-qt5-probe is pushed so the other Qt major's watch
       # is left alone.
+      # workflow_dispatch 最多 10 个输入，Qt5 平台插件与主题集成固定使用 master；
+      # 与 DTK6 相同，它们紧接在 DTK5 widget 之后构建
+      # workflow_dispatch takes at most 10 inputs, so the Qt 5 platform plugins
+      # and theme integration always build master.  As for DTK6, they follow
+      # the DTK5 widget module.
       modules: >-
         dtk5common:${{ inputs.dtk5common }}
         dtklog:${{ inputs.dtklog }}
         dtk5core:${{ inputs.dtk5core }}
         dtk5gui:${{ inputs.dtk5gui }}
         dtk5widget:${{ inputs.dtk5widget }}
+        dde-qt5platform-plugins:master
+        dde-qt5integration:master
         dtk2core:${{ inputs.dtk2core }}
         gxde-qt-dbus-factory:${{ inputs.gxde_qt_dbus_factory }}
         dtk2widget:${{ inputs.dtk2widget }}
