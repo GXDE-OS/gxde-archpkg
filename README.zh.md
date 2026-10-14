@@ -31,6 +31,30 @@ $ pacman -Sl gxde
 
 当前这个源没有签名，因此需要`SigLevel = Optional TrustAll`。我们计划在不久补上Arch包签名。
 
+#### 安装桌面
+用一个元包安装完整的桌面：
+```shell
+$ sudo pacman -S gxde-desktop-full
+```
+
+也可以按需选择元包，DTK 与基础组件的元包会自动安装：
+
+| 元包 | 内容 |
+| --- | --- |
+| `gxde-core-git` | GXDE 桌面核心组件，含 Flake Wayland 合成器 |
+| `gxde-desktop-extras` | GXDE 应用、GXDE 显示管理器（`gxdm-git`）等 |
+| `gxde-desktop-full` | 以上全部 |
+
+然后启用 GXDE 显示管理器（包含在 `gxde-desktop-extras` 中；只装了 `gxde-core-git` 的话请另行安装 `gxdm-git`）：
+```shell
+$ sudo systemctl disable display-manager.service  # 仅当已启用其他显示管理器时
+$ sudo systemctl enable gxdm.service
+```
+
+重启后在登录界面选择 `GXDE`（X11）或 `gxde-flakewm`（Wayland）会话。
+
+这些元包与下面 AUR 上的包同名，安装后会替换掉对应的 AUR 包。
+
 ### 通过AUR
 > 当前，AUR上的GXDE包由@CharOfString维护。
 >
@@ -81,6 +105,7 @@ $ paru -S gxde-dtk5-git gxde-dtk6-git gxde-dtk2-git gxde-dtk2-qt6-git gxde-infra
 - **master**: 本分支。
 - **aur**: 储存AUR打包信息。
 - **qt_version_probe**: 小型探针程序的源代码，用于检测GXDE Arch软件的Qt版本是否与Arch Linux系统中的版本不匹配。
+- **meta_packages**: Arch版GXDE的元包。
 
 ### 不活跃分支
 - **dtk5_batchbuild_arch**: DTK5的批量构建CI脚本，已移动至本分支。

@@ -31,6 +31,30 @@ $ pacman -Sl gxde
 
 Currently the source is not signed, hence `SigLevel = Optional TrustAll`. A signing will be provided soon.
 
+#### Installing the Desktop
+Install the whole desktop with one meta package:
+```shell
+$ sudo pacman -S gxde-desktop-full
+```
+
+Or pick the meta packages you need; the DTK and infrastructure meta packages are pulled in automatically:
+
+| Meta package | Contents |
+| --- | --- |
+| `gxde-core-git` | GXDE desktop core components, with the Flake Wayland compositor |
+| `gxde-desktop-extras` | GXDE applications, the GXDE display manager (`gxdm-git`) and more |
+| `gxde-desktop-full` | Everything above |
+
+Then enable the GXDE display manager (part of `gxde-desktop-extras`; install `gxdm-git` yourself if you only installed `gxde-core-git`):
+```shell
+$ sudo systemctl disable display-manager.service  # only if another display manager is enabled
+$ sudo systemctl enable gxdm.service
+```
+
+Reboot and choose the `GXDE` session (X11) or `gxde-flakewm` (Wayland) at the login screen.
+
+These meta packages carry the same names as the AUR bundles below, so installing them replaces the AUR packages.
+
 ### AUR
 > Currently, AUR packages are maintained by @CharOfString.
 >
@@ -81,6 +105,7 @@ You may find this repository almost empty. That's completely normal for we use b
 - **master**: This branch is for this welcome message.
 - **aur**: Stores the AUR packaging info.
 - **qt_version_probe**: The source code of a small probe that detects if the GXDE arch software's Qt version mismatches from Archlinux.
+- **meta_packages**: The Arch meta packages.
 
 ### Inactive Branch
 - **dtk5_batchbuild_arch**: The batch build CI script for DTK5, now moved to this branch.
