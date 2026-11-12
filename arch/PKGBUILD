@@ -6,7 +6,7 @@
 pkgbase=gxde-meta-packages
 pkgname=('gxde-dtk5-git' 'gxde-dtk6-git' 'gxde-dtk2-git' 'gxde-dtk2-qt6-git' 'gxde-infra-git'
          'gxde-core-git' 'gxde-desktop-extras' 'gxde-desktop-full')
-pkgver=2026.10.14
+pkgver=2026.11.11
 pkgrel=4
 arch=('any')
 url="https://github.com/GXDE-OS/gxde-archpkg"
