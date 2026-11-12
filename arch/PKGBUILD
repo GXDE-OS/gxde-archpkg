@@ -80,7 +80,7 @@ package_gxde-core-git() {
            'libgxde-file-manager-git' 'gxde-file-manager-integration-git' 'gxde-requ-git'
            'gxde-time-screensaver-git' 'deepin-screensaver-git' 'deepin-screensaver-xscreensaver-data-git'
            'util-dfm-git' 'deepin-pdfium-git' 'deepin-service-manager-git' 'dde-grand-search-git'
-           'gxde-terminal-git'
+           'gxde-terminal-git' 'gxde-lock-git'
            # AUR 的合集不含合成器；GXDE Arch 源使用 Flake Wayland 合成器
            # The AUR bundle has no compositor; the GXDE Arch repo uses the Flake Wayland compositor.
            'flakewm-git' 'gxde-flake-session-git')
