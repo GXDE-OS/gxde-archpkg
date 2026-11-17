@@ -4,8 +4,8 @@
 # Meta packages matching the AUR bundles of the same name: they cover the same
 # components, but install the individual packages from the GXDE Arch repo.
 pkgbase=gxde-meta-packages
-pkgname=('gxde-dtk5-git' 'gxde-dtk6-git' 'gxde-dtk2-git' 'gxde-dtk2-qt6-git' 'gxde-infra-git'
-         'gxde-core-git' 'gxde-desktop-extras' 'gxde-desktop-full')
+pkgname=('gxde-dtk5' 'gxde-dtk6' 'gxde-dtk2' 'gxde-dtk2-qt6' 'gxde-infra'
+         'gxde-core' 'gxde-desktop-extras' 'gxde-desktop-full')
 pkgver=2026.11.11
 pkgrel=4
 arch=('any')
@@ -23,94 +23,112 @@ _license() {
   install -Dm644 "$(_srcroot)/LICENSE" "$pkgdir/usr/share/licenses/$pkgname/LICENSE"
 }
 
-package_gxde-dtk5-git() {
+package_gxde-dtk5() {
   pkgdesc='GXDE OS fork of the Deepin Tool Kit 5 (meta package)'
-  depends=('dtkcommon-git' 'dtklog-git' 'dtkcore-git' 'dtkgui-git' 'dtkwidget-git'
-           'deepin-qt5platform-plugins-git' 'deepin-qt5integration-git')
+  depends=('gxde-dtkcommon' 'gxde-dtklog' 'gxde-dtkcore' 'gxde-dtkgui' 'gxde-dtkwidget'
+           'gxde-deepin-qt5platform-plugins' 'gxde-deepin-qt5integration')
+  provides=("gxde-dtk5-git=$pkgver")
+  conflicts=('gxde-dtk5-git')
+  replaces=('gxde-dtk5-git')
   _license
 }
 
-package_gxde-dtk6-git() {
+package_gxde-dtk6() {
   pkgdesc='GXDE OS fork of the Deepin Tool Kit 6 (meta package)'
-  depends=('gxde-dtk5-git' 'dtk6log-git' 'dtk6core-git' 'dtk6gui-git' 'dtk6widget-git' 'dtk6declarative-git'
-           'deepin-qt6platform-plugins-git' 'deepin-qt6integration-git')
+  depends=('gxde-dtk5' 'gxde-dtk6log' 'gxde-dtk6core' 'gxde-dtk6gui' 'gxde-dtk6widget' 'gxde-dtk6declarative'
+           'gxde-deepin-qt6platform-plugins' 'gxde-deepin-qt6integration')
   optdepends=('lshw: hardware info in DSysInfo')
+  provides=("gxde-dtk6-git=$pkgver")
+  conflicts=('gxde-dtk6-git')
+  replaces=('gxde-dtk6-git')
   _license
 }
 
-package_gxde-dtk2-git() {
+package_gxde-dtk2() {
   pkgdesc='GXDE OS DTK2 fork, modified to work with DTK5 (meta package)'
-  depends=('gxde-dtk5-git' 'dtkcore2-git' 'deepin-qt-dbus-factory-git' 'dtkwidget2-git'
-           'gxde-qt5integration-git')
+  depends=('gxde-dtk5' 'dtkcore2' 'gxde-deepin-qt-dbus-factory' 'dtkwidget2'
+           'gxde-qt5integration')
+  provides=("gxde-dtk2-git=$pkgver")
+  conflicts=('gxde-dtk2-git')
+  replaces=('gxde-dtk2-git')
   _license
 }
 
-package_gxde-dtk2-qt6-git() {
+package_gxde-dtk2-qt6() {
   pkgdesc='Qt6 port of DTK2, on top of GXDE DTK6 (meta package)'
-  depends=('gxde-dtk6-git' 'dtk2widget-qt6-git' 'gxde-qt6integration-git')
+  depends=('gxde-dtk6' 'dtk2widget-qt6' 'gxde-qt6integration')
+  provides=("gxde-dtk2-qt6-git=$pkgver")
+  conflicts=('gxde-dtk2-qt6-git')
+  replaces=('gxde-dtk2-qt6-git')
   _license
 }
 
-package_gxde-infra-git() {
+package_gxde-infra() {
   pkgdesc='GXDE OS infrastructure components (meta package)'
-  depends=('gxde-dtk5-git' 'gxde-dtk2-git' 'gxde-dtk6-git' 'gxde-dtk2-qt6-git'
-           'golang-gxde-dev-git' 'gxde-k9-git' 'disomaster-qt6-git' 'gxde-api-git' 'libgnome-keyring-git'
-           'gxde-desktop-base-git' 'gxde-desktop-schemas-git' 'dframework-dbus-qt6-git'
-           'gxde-network-utils-qt6-git' 'udisks2-qt6-git' 'gxde-movie-git' 'libgxmr-git' 'libgxmr-qt6-git'
-           'libdbusmenu-qt6-git' 'xdg-desktop-portal-gxde-git')
+  depends=('gxde-dtk5' 'gxde-dtk2' 'gxde-dtk6' 'gxde-dtk2-qt6'
+           'golang-gxde-dev-git' 'gxde-k9' 'disomaster-qt6' 'gxde-api' 'libgnome-keyring'
+           'gxde-desktop-base' 'gxde-desktop-schemas' 'dframework-dbus-qt6'
+           'gxde-network-utils-qt6' 'gxde-udisks2-qt6' 'gxde-movie' 'libgxmr' 'libgxmr-qt6'
+           'libdbusmenu-qt6' 'xdg-desktop-portal-gxde')
   optdepends=('gnome-keyring: secret storage backend for libgnome-keyring')
+  provides=("gxde-infra-git=$pkgver")
+  conflicts=('gxde-infra-git')
+  replaces=('gxde-infra-git')
   _license
 }
 
-package_gxde-core-git() {
+package_gxde-core() {
   pkgdesc='GXDE OS desktop core components set. Note that X11 is NO longer provided. (meta package)'
-  depends=('gxde-dtk5-git' 'gxde-dtk2-git' 'gxde-dtk6-git' 'gxde-dtk2-qt6-git' 'gxde-infra-git'
-           'gxde-account-faces-git' 'gxde-icon-theme-git' 'gxde-sea-icon-theme-git' 'deepin-gtk-theme-git'
-           'gxde-artwork-git' 'gxde-wallpapers-git' 'gxde-community-wallpapers-git'
-           'gxde-solidwallpapers-git' 'gxde-default-settings-git' 'gxde-default-settings-tuning-git'
-           'transhell-git' 'garma-git' 'gxde-app-installer-git' 'gxde-app-upgrader-git'
-           'gxde-app-uninstaller-git' 'gxde-shell-tools-git' 'gxde-sound-theme-git' 'gxde-polkit-agent-git'
-           'dpa-ext-gnomekeyring-git' 'gxde-installer-timezones-git' 'deepin-daemon-git' 'gxde-daemon-git'
-           'startgxde-git' 'deepin-menu-git' 'gxde-sni-server-git' 'gxde-dock-git'
-           'gxde-dock-onboard-plugin-git' 'gxde-globalmenu-service-git' 'gxde-wayland-gtk-menu-git'
-           'gxde-top-panel-plugins-git' 'dde-top-panel-plugins-git' 'gxde-top-panel-git'
-           'gxde-control-center-git' 'gxde-launcher-git' 'gxde-session-ui-git' 'zipu-git'
-           'gxde-shell-compressor-git' 'gxde-compressor-git' 'rofd-git' 'librofd-ffi-git'
-           'gxde-file-manager-git' 'gxde-desktop-panel-git' 'gxde-disk-mount-plugin-git'
-           'libgxde-file-manager-git' 'gxde-file-manager-integration-git' 'gxde-requ-git'
-           'gxde-time-screensaver-git' 'deepin-screensaver-git' 'deepin-screensaver-xscreensaver-data-git'
-           'util-dfm-git' 'deepin-pdfium-git' 'deepin-service-manager-git' 'dde-grand-search-git'
-           'gxde-terminal-git' 'gxde-lock-git'
+  depends=('gxde-dtk5' 'gxde-dtk2' 'gxde-dtk6' 'gxde-dtk2-qt6' 'gxde-infra'
+           'gxde-account-faces' 'gxde-icon-theme' 'gxde-sea-icon-theme' 'gxde-deepin-gtk-theme'
+           'gxde-artwork' 'gxde-wallpapers' 'gxde-community-wallpapers'
+           'gxde-solidwallpapers' 'gxde-default-settings' 'gxde-default-settings-tuning'
+           'transhell' 'garma' 'gxde-app-installer' 'gxde-app-upgrader'
+           'gxde-app-uninstaller' 'gxde-shell-tools' 'gxde-sound-theme' 'gxde-polkit-agent'
+           'dpa-ext-gnomekeyring' 'gxde-installer-timezones' 'gxde-deepin-daemon' 'gxde-daemon'
+           'startgxde' 'gxde-deepin-menu' 'gxde-sni-server' 'gxde-dock'
+           'gxde-dock-onboard-plugin' 'gxde-globalmenu-service' 'gxde-wayland-gtk-menu'
+           'gxde-top-panel-plugins' 'dde-top-panel-plugins' 'gxde-top-panel'
+           'gxde-control-center' 'gxde-launcher' 'gxde-session-ui' 'zipu'
+           'gxde-shell-compressor' 'gxde-compressor' 'rofd' 'librofd-ffi'
+           'gxde-file-manager' 'gxde-desktop-panel' 'gxde-disk-mount-plugin'
+           'libgxde-file-manager' 'gxde-file-manager-integration' 'gxde-requ'
+           'gxde-time-screensaver-git' 'gxde-deepin-screensaver' 'deepin-screensaver-xscreensaver-data'
+           'util-dfm' 'gxde-deepin-pdfium' 'gxde-deepin-service-manager' 'dde-grand-search'
+           'gxde-terminal' 'gxde-lock'
            # AUR 的合集不含合成器；GXDE Arch 源使用 Flake Wayland 合成器
            # The AUR bundle has no compositor; the GXDE Arch repo uses the Flake Wayland compositor.
-           'flakewm-git' 'gxde-flake-session-git')
+           'flakewm' 'gxde-flake-session')
   optdepends=('lightdm: display manager for lightdm-deepin-greeter'
               'accountsservice: user account information for the session and control center')
+  provides=("gxde-core-git=$pkgver")
+  conflicts=('gxde-core-git')
+  replaces=('gxde-core-git')
   _license
 }
 
 package_gxde-desktop-extras() {
   pkgdesc='GXDE OS desktop extra applications (meta package)'
-  # 对应 AUR 上的可选软件包；gxde-dtk5widget-dev-git 的开发文件已在 dtkwidget-git 中，
-  # gxde-dtk2widget-dev-git（dtkwidget2-dev-git）与 dtkwidget-git 冲突，因此不包含
+  # 对应 AUR 上的可选软件包；gxde-dtk5widget-dev-git 的开发文件已在 gxde-dtkwidget 中，
+  # gxde-dtk2widget-dev-git（dtkwidget2-dev）与 gxde-dtkwidget 冲突，因此不包含
   # Covers the optional AUR packages.  The files of gxde-dtk5widget-dev-git are
-  # part of dtkwidget-git; gxde-dtk2widget-dev-git (dtkwidget2-dev-git)
-  # conflicts with dtkwidget-git and is left out.
-  depends=('dtkwidget-git' 'spark-webapp-runtime-git' 'gxde-voice-recorder-git' 'deepin-system-monitor-git'
-           'gxde-system-assistant-git' 'deepin-screen-recorder-git' 'deepin-compressor-git'
-           'deepin-reader-git' 'gxde-picker-git' 'gxde-ocr-git' 'gxde-music-git' 'deepin-log-viewer-git'
-           'liblogviewerplugin-git' 'gxde-image-viewer-git' 'gxde-hardware-viewer-git'
-           'gxde-font-installer-git' 'libgxde-font-installer-git' 'gxde-filetransfer-git' 'gxde-editor-git'
-           'gxde-downloader-git' 'gxde-dlna-caster-git' 'gxdm-git' 'gxdm-emergency-mode-git' 'gxde-dict-git'
-           'deepin-clone-git' 'deepin-camera-git' 'gxde-calendar-git' 'deepin-calculator-git'
-           'gxde-boot-maker-git' 'flakewm-git' 'flakewm-client-git' 'gxde-flake-session-git'
-           'dde-clipboard-git')
+  # part of gxde-dtkwidget; gxde-dtk2widget-dev-git (dtkwidget2-dev)
+  # conflicts with gxde-dtkwidget and is left out.
+  depends=('gxde-dtkwidget' 'spark-webapp-runtime' 'gxde-voice-recorder' 'gxde-deepin-system-monitor'
+           'gxde-system-assistant' 'gxde-deepin-screen-recorder' 'gxde-deepin-compressor'
+           'deepin-reader' 'gxde-picker' 'gxde-ocr' 'gxde-music' 'gxde-deepin-log-viewer'
+           'liblogviewerplugin' 'gxde-image-viewer' 'gxde-hardware-viewer'
+           'gxde-font-installer' 'libgxde-font-installer' 'gxde-filetransfer' 'gxde-editor'
+           'gxde-downloader' 'gxde-dlna-caster' 'gxdm' 'gxdm-emergency-mode' 'gxde-dict'
+           'deepin-clone' 'gxde-deepin-camera' 'gxde-calendar' 'gxde-deepin-calculator'
+           'gxde-boot-maker' 'flakewm' 'flakewm-client' 'gxde-flake-session'
+           'dde-clipboard')
   _license
 }
 
 package_gxde-desktop-full() {
   pkgdesc='Full GXDE OS desktop: every GXDE meta package (meta package)'
-  depends=('gxde-dtk5-git' 'gxde-dtk6-git' 'gxde-dtk2-git' 'gxde-dtk2-qt6-git' 'gxde-infra-git'
-           'gxde-core-git' 'gxde-desktop-extras')
+  depends=('gxde-dtk5' 'gxde-dtk6' 'gxde-dtk2' 'gxde-dtk2-qt6' 'gxde-infra'
+           'gxde-core' 'gxde-desktop-extras')
   _license
 }
