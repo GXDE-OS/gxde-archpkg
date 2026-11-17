@@ -41,11 +41,11 @@ Or pick the meta packages you need; the DTK and infrastructure meta packages are
 
 | Meta package | Contents |
 | --- | --- |
-| `gxde-core-git` | GXDE desktop core components, with the Flake Wayland compositor |
-| `gxde-desktop-extras` | GXDE applications, the GXDE display manager (`gxdm-git`) and more |
+| `gxde-core` | GXDE desktop core components, with the Flake Wayland compositor |
+| `gxde-desktop-extras` | GXDE applications, the GXDE display manager (`gxdm`) and more |
 | `gxde-desktop-full` | Everything above |
 
-Then enable the GXDE display manager (part of `gxde-desktop-extras`; install `gxdm-git` yourself if you only installed `gxde-core-git`):
+Then enable the GXDE display manager (part of `gxde-desktop-extras`; install `gxdm` yourself if you only installed `gxde-core`):
 ```shell
 $ sudo systemctl disable display-manager.service  # only if another display manager is enabled
 $ sudo systemctl enable gxdm.service
