@@ -41,11 +41,11 @@ $ sudo pacman -S gxde-desktop-full
 
 | 元包 | 内容 |
 | --- | --- |
-| `gxde-core-git` | GXDE 桌面核心组件，含 Flake Wayland 合成器 |
-| `gxde-desktop-extras` | GXDE 应用、GXDE 显示管理器（`gxdm-git`）等 |
+| `gxde-core` | GXDE 桌面核心组件，含 Flake Wayland 合成器 |
+| `gxde-desktop-extras` | GXDE 应用、GXDE 显示管理器（`gxdm`）等 |
 | `gxde-desktop-full` | 以上全部 |
 
-然后启用 GXDE 显示管理器（包含在 `gxde-desktop-extras` 中；只装了 `gxde-core-git` 的话请另行安装 `gxdm-git`）：
+然后启用 GXDE 显示管理器（包含在 `gxde-desktop-extras` 中；只装了 `gxde-core` 的话请另行安装 `gxdm`）：
 ```shell
 $ sudo systemctl disable display-manager.service  # 仅当已启用其他显示管理器时
 $ sudo systemctl enable gxdm.service

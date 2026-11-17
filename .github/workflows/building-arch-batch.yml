@@ -111,11 +111,11 @@ jobs:
             pkgnames=(${only//,/ })
             (( ${#pkgnames[@]} )) || pkgnames=($pkgname)
 
-            # 同一 chroot 中先前模块装入的包可能与本模块冲突（如 dtkwidget2-dev-git 与
-            # dtkwidget-git 共用开发文件路径），构建前将其卸载，使环境与单独构建时一致
+            # 同一 chroot 中先前模块装入的包可能与本模块冲突（如 dtkwidget2-dev 与
+            # gxde-dtkwidget 共用开发文件路径），构建前将其卸载，使环境与单独构建时一致
             # Packages installed by earlier modules may conflict with this one
-            # (e.g. dtkwidget2-dev-git shares its development files with
-            # dtkwidget-git).  Remove them before building, so the module builds
+            # (e.g. dtkwidget2-dev shares its development files with
+            # gxde-dtkwidget).  Remove them before building, so the module builds
             # as it would in a clean chroot.
             conflicts=$(awk -F' = ' '$1 == "\tconflicts" { sub(/[<>=].*/, "", $2); print $2 }' <<< "$srcinfo" | sort -u)
             if [[ -n $conflicts ]]; then
