@@ -66,7 +66,7 @@ package_gxde-dtk2-qt6() {
 package_gxde-infra() {
   pkgdesc='GXDE OS infrastructure components (meta package)'
   depends=('gxde-dtk5' 'gxde-dtk2' 'gxde-dtk6' 'gxde-dtk2-qt6'
-           'golang-gxde-dev-git' 'gxde-k9' 'disomaster-qt6' 'gxde-api' 'libgnome-keyring'
+           'golang-gxde-dev' 'gxde-k9' 'disomaster-qt6' 'gxde-api' 'libgnome-keyring'
            'gxde-desktop-base' 'gxde-desktop-schemas' 'dframework-dbus-qt6'
            'gxde-network-utils-qt6' 'gxde-udisks2-qt6' 'gxde-movie' 'libgxmr' 'libgxmr-qt6'
            'libdbusmenu-qt6' 'xdg-desktop-portal-gxde')
@@ -93,7 +93,7 @@ package_gxde-core() {
            'gxde-shell-compressor' 'gxde-compressor' 'rofd' 'librofd-ffi'
            'gxde-file-manager' 'gxde-desktop-panel' 'gxde-disk-mount-plugin'
            'libgxde-file-manager' 'gxde-file-manager-integration' 'gxde-requ'
-           'gxde-time-screensaver-git' 'gxde-deepin-screensaver' 'deepin-screensaver-xscreensaver-data'
+           'gxde-time-screensaver' 'gxde-deepin-screensaver' 'deepin-screensaver-xscreensaver-data'
            'util-dfm' 'gxde-deepin-pdfium' 'gxde-deepin-service-manager' 'dde-grand-search'
            'gxde-terminal' 'gxde-lock'
            # AUR 的合集不含合成器；GXDE Arch 源使用 Flake Wayland 合成器
